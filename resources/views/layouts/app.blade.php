@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('judul', 'Lost n Found Kampus')</title>
+
+    {{-- Font: Archivo (judul) + Plus Jakarta Sans (isi). Ada font cadangan di app.css. --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {{-- Urutan penting: Bootstrap dulu, app.css terakhir supaya override-nya menang. --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @stack('gaya')
+</head>
+<body>
+    <a class="lewati-ke-konten" href="#konten">Lewati ke konten</a>
+
+    @php
+        // [label, path, pola untuk menandai menu aktif, role yang boleh melihat (null = semua)]
+        $peran = auth()->check() ? auth()->user()->role : null;
+        $menu = [
+            ['Katalog',      '/',                 '/',                 null],
+            ['Lapor barang', '/items/create',     'items/create',      ['pengguna', 'petugas']],
+            ['Riwayat saya', '/riwayat',          'riwayat',           ['pengguna']],
+            ['Klaim masuk',  '/petugas/claims',   'petugas/*',         ['petugas']],
+            ['Kategori',     '/admin/categories', 'admin/categories*', ['admin']],
+            ['Lokasi',       '/admin/locations',  'admin/locations*',  ['admin']],
+            // Tambahkan ['Dashboard', '/admin/dashboard', 'admin/dashboard', ['admin']] kalau fitur O1 dibuat.
+        ];
+    @endphp
+
+    <header class="bar-atas">
+        <nav class="navbar navbar-expand-lg" aria-label="Menu utama">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    <span class="merek-tanda" aria-hidden="true"><i class="bi bi-tag-fill"></i></span>
+                    Lost n Found
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#menu-utama" aria-controls="menu-utama"
+                        aria-expanded="false" aria-label="Buka menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="menu-utama">
+                    <ul class="navbar-nav me-auto">
+                        @foreach ($menu as [$label, $path, $pola, $boleh])
+                            @if ($boleh === null || in_array($peran, $boleh))
+                                <li class="nav-item">
+                                    <a @class(['nav-link', 'active' => request()->is($pola)])
+                                       href="{{ url($path) }}"
+                                       @if (request()->is($pola)) aria-current="page" @endif>{{ $label }}</a>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+
+                    <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
+                        @auth
+                            <li class="nav-item">
+                                <span class="nav-link nama-pengguna">{{ auth()->user()->name }}</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="POST" action="{{ url('/logout') }}">
+                                    @csrf
+                                    <button type="submit" class="nav-link nav-tombol">Keluar</button>
+                                </form>
+                            </li>
+                        @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('/login') }}">Masuk</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-primary btn-sm" href="{{ url('/register') }}">Buat akun</a>
+                            </li>
+                        @endauth
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main id="konten" class="halaman">
+        <div class="container">
+            @if (session('sukses'))
+                <div class="alert alert-success" role="status">{{ session('sukses') }}</div>
+            @endif
+            @if (session('galat'))
+                <div class="alert alert-danger" role="alert">{{ session('galat') }}</div>
+            @endif
+            @if ($errors->any())
+                <div class="alert alert-danger" role="alert">
+                    {{ $errors->count() }} isian perlu diperbaiki. Lihat pesan di bawah tiap kolom.
+                </div>
+            @endif
+
+            @yield('isi')
+        </div>
+    </main>
+
+    <footer class="kaki">
+        <div class="container">
+            <p>Lost n Found Kampus. Tugas besar Pemrograman Web, Universitas Telkom.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('skrip')
+</body>
+</html>
