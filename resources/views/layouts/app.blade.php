@@ -30,7 +30,8 @@
             ['Klaim masuk',  '/petugas/claims',   'petugas/*',         ['petugas']],
             ['Kategori',     '/admin/categories', 'admin/categories*', ['admin']],
             ['Lokasi',       '/admin/locations',  'admin/locations*',  ['admin']],
-            // Tambahkan ['Dashboard', '/admin/dashboard', 'admin/dashboard', ['admin']] kalau fitur O1 dibuat.
+            ['Pengguna',     '/admin/users',      'admin/users*',      ['admin']],
+            ['Dashboard',    '/admin/dashboard',  'admin/dashboard',   ['admin']],
         ];
     @endphp
 

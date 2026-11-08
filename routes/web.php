@@ -35,6 +35,9 @@ Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->group(function (
     Route::post('/claims/{claim}/reject', [\App\Http\Controllers\Petugas\ClaimController::class, 'reject'])->name('petugas.claims.reject');
 });
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function (): void {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+    Route::post('/users/{user}/toggle', [\App\Http\Controllers\Admin\UserController::class, 'toggle'])->name('admin.users.toggle');
     Route::resource('categories', AdminCategoryController::class)->names('admin.categories');
     Route::resource('locations', AdminLocationController::class)->names('admin.locations');
 });
