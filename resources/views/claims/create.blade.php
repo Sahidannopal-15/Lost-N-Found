@@ -8,7 +8,7 @@
         <p>{{ $item->title }} ({{ $item->code }})</p>
     </section>
 
-    <form method="POST" action="{{ route('claims.store', $item) }}">
+    <form method="POST" action="{{ route('claims.store', $item) }}" id="form-claims">
         @csrf
         <div class="mb-3">
             <label class="form-label" for="description">Ciri barang</label>
@@ -27,4 +27,7 @@
             <a href="{{ route('items.show', $item) }}" class="btn btn-outline-secondary">Batal</a>
         </div>
     </form>
+    @push('skrip')
+    <script src="{{ asset('js/validasi.js') }}"></script>
+    @endpush
 @endsection

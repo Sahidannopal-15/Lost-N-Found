@@ -1,0 +1,62 @@
+HASIL ANALISIS 10 SCREENSHOT - FINDO
+
+Catatan: Nama website diganti menjadi Findo; footer halaman utama diganti
+menjadi bentuk profesional (logo, deskripsi, navigasi, kontak, hak cipta).
+
+1. Katalog
+Fitur: daftar barang hilang/temuan, form filter, kartu, paginasi, akses Guest.
+Fungsi: menampilkan dan mencari semua laporan.
+CRUD: Read utama. Create dari form lapor, Update dari edit, Delete dari detail/edit.
+
+2. Detail barang
+Fitur: tampilkan foto, judul, deskripsi, lokasi, tanggal, jenis, kode, status, aksi.
+Fungsi: informasi lengkap satu laporan.
+CRUD: Read utama; Update/Delete dari detail/edit.
+
+3. Login
+Fitur: form masuk.
+Fungsi: otentikasi; buka halaman berbasis role.
+CRUD: Read otentikasi, create sesi, delete saat logout.
+
+4. Register
+Fitur: form daftar akun.
+Fungsi: buat akun baru.
+CRUD: Create pengguna.
+
+5. Form lapor barang
+Fitur: pilih jenis, judul, deskripsi, kategori, lokasi, tanggal, foto; validasi.
+Fungsi: tambah laporan baru.
+CRUD: Create.
+
+6. Riwayat saya
+Fitur: daftar laporan dan klaim milik pengguna.
+Fungsi: lihat aktivitas pribadi.
+CRUD: Read; Update/Delete klaim atau laporan.
+
+7. Form klaim
+Fitur: deskripsi + bukti, validasi minimal.
+Fungsi: ajukan klaim pada barang temuan.
+CRUD: Create klaim; laporan berubah status menjadi "Dalam klaim".
+
+8. Edit laporan
+Fitur: isi ulang form dengan data lama, tombol simpan/hapus.
+Fungsi: perbarui laporan milik sendiri.
+CRUD: Update (dan Delete terkait bila diizinkan).
+
+9. Admin kategori & lokasi
+Fitur: tabel daftar + tombol tambah/edit/hapus.
+Fungsi: kelola kategori dan lokasi referensi.
+CRUD: Read, Create, Update, Delete, dengan batasan saat data masih dipakai.
+
+10. Petugas daftar klaim
+Fitur: tabel klaim menunggu + tombol setujui/tolak.
+Fungsi: pantau klaim dan Keputusan petugas.
+CRUD: Read, Update status klaim; status item ikut berubah (selesai/dalam_klaim).
+
+RINGKASAN CRUD UMUM
+- Barang/laporan: Create, Read, Update, Delete.
+- Klaim: Create, Read, Update, Delete.
+- Kategori dan Lokasi: Read, Create, Update, Delete (dengan syarat data tidak digunakan).
+- Pengguna: Create, Read, Update, Delete.
+
+Catatan laporan: fokus pada penjelasan fitur dan fungsi, bukan kode teknis.

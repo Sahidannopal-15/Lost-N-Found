@@ -60,3 +60,6 @@
         <div class="form-text">Foto saat ini: {{ $item->photo_path }}</div>
     @endif
 </div>
+    @push('skrip')
+    <script src="{{ asset('js/validasi.js') }}"></script>
+    @endpush

@@ -21,6 +21,10 @@ class ClaimController extends Controller
 
     public function approve(Claim $claim)
     {
+        if ($claim->status !== 'menunggu') {
+            return back()->with('galat', 'Klaim tidak dapat diproses.');
+        }
+
         $claim->update([
             'status' => 'disetujui',
             'handled_by' => auth()->id(),
@@ -34,6 +38,10 @@ class ClaimController extends Controller
 
     public function reject(Request $request, Claim $claim)
     {
+        if ($claim->status !== 'menunggu') {
+            return back()->with('galat', 'Klaim tidak dapat diproses.');
+        }
+
         $data = $request->validate([
             'officer_note' => ['required', 'string', 'min:5'],
         ], [

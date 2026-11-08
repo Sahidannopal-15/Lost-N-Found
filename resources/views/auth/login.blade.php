@@ -10,7 +10,7 @@
 
     <div class="row justify-content-center">
         <div class="col-12 col-md-6 col-lg-4">
-            <form method="POST" action="{{ route('login') }}" novalidate>
+            <form method="POST" action="{{ route('login') }}" id="form-login" novalidate>
                 @csrf
                 <div class="mb-3">
                     <label class="form-label" for="email">Email</label>
@@ -35,4 +35,7 @@
             </form>
         </div>
     </div>
+    @push('skrip')
+    <script src="{{ asset('js/validasi.js') }}"></script>
+    @endpush
 @endsection

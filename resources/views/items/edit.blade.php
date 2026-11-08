@@ -7,7 +7,7 @@
         <h1 class="h2">Ubah laporan</h1>
     </section>
 
-    <form method="POST" action="{{ route('items.update', $item) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('items.update', $item) }}" id="form-items" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         @include('items._form', ['item' => $item])

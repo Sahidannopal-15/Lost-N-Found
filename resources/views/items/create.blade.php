@@ -7,7 +7,7 @@
         <h1 class="h2">Lapor barang</h1>
     </section>
 
-    <form method="POST" action="{{ route('items.store') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('items.store') }}" id="form-items" enctype="multipart/form-data">
         @csrf
         @include('items._form')
         <div class="d-flex gap-2">
