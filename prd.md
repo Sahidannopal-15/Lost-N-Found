@@ -133,6 +133,31 @@ Relasi: users 1–N items; users 1–N claims; categories 1–N items; locations
 - **Paginasi:** di `AppServiceProvider::boot()` tambahkan `Paginator::useBootstrapFive();` (`use Illuminate\Pagination\Paginator;`). Tanpa ini paginasi Laravel memakai gaya Tailwind.
 - **Foto:** jalankan `php artisan storage:link`.
 
+### Peta file aplikasi
+
+Peta ini mencakup file khusus aplikasi yang dibuat atau diubah untuk fitur F1–F9, bukan seluruh file bawaan Laravel. Gunakan lokasi dan nama berikut agar anggota tim memakai struktur yang konsisten.
+
+| Tanggung jawab | File atau folder |
+|---|---|
+| Model dan relasi | `app/Models/User.php`, `app/Models/Category.php`, `app/Models/Location.php`, `app/Models/Item.php`, `app/Models/Claim.php` |
+| Autentikasi | `app/Http/Controllers/AuthController.php` — register, login, logout |
+| Laporan barang | `app/Http/Controllers/ItemController.php` — katalog/detail, CRUD laporan, dan tandai laporan hilang selesai |
+| Pengajuan klaim dan riwayat | `app/Http/Controllers/ClaimController.php` — pengajuan klaim; `app/Http/Controllers/RiwayatController.php` — riwayat pengguna |
+| Verifikasi klaim petugas | `app/Http/Controllers/Petugas/ClaimController.php` — daftar, setujui, dan tolak klaim |
+| CRUD master data admin | `app/Http/Controllers/Admin/CategoryController.php` dan `app/Http/Controllers/Admin/LocationController.php` |
+| Endpoint JSON barang | `app/Http/Controllers/Api/ItemController.php` — daftar dan detail barang, hanya baca |
+| Pembatasan role | `app/Http/Middleware/RoleMiddleware.php` |
+| Paginasi Bootstrap | `app/Providers/AppServiceProvider.php` — aktifkan `Paginator::useBootstrapFive()` |
+| Route halaman dan form | `routes/web.php` |
+| Skema basis data | `database/migrations/` — migration untuk `users`, `categories`, `locations`, `items`, dan `claims` |
+| Data demo | `database/seeders/DatabaseSeeder.php` |
+| Halaman Blade | `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`; `resources/views/items/index.blade.php`, `resources/views/items/show.blade.php`, `resources/views/items/create.blade.php`, `resources/views/items/edit.blade.php`; `resources/views/claims/create.blade.php`; `resources/views/riwayat/index.blade.php`; `resources/views/petugas/claims/index.blade.php`; `resources/views/admin/categories/index.blade.php`, `resources/views/admin/categories/create.blade.php`, `resources/views/admin/categories/edit.blade.php`; `resources/views/admin/locations/index.blade.php`, `resources/views/admin/locations/create.blade.php`, `resources/views/admin/locations/edit.blade.php` |
+| CSS aplikasi | `public/css/app.css` — lokasi kanonis sesuai bagian 11; jangan menyimpan salinan kedua di `public/app.css` |
+| Skrip halaman | `@push('skrip')` pada view terkait, sesuai bagian 11; gunakan jQuery yang dimuat layout, tanpa Vite/npm |
+| Pengujian | `tests/Feature/` untuk alur dan akses fitur; `tests/Unit/` untuk logika unit bila diperlukan |
+
+Nama controller dan path view di atas menjadi ketentuan struktur proyek. Jika belum tersedia, buat file dengan nama dan lokasi tersebut. Untuk layout dan partial desain bersama, gunakan path persis yang tercantum di bagian 11.
+
 ## 8. Halaman dan route
 
 **Halaman:** (1) beranda/katalog, (2) detail barang, (3) login, (4) register, (5) form lapor barang, (6) riwayat saya, (7) form klaim, (8) dashboard admin (opsional), (9) admin kategori dan lokasi, (10) petugas daftar klaim + verifikasi. Ditambah form edit laporan.
