@@ -41,6 +41,11 @@ class User extends Authenticatable
         return $this->hasMany(Item::class);
     }
 
+    public function claims(): HasMany
+    {
+        return $this->hasMany(Claim::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

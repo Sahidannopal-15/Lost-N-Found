@@ -73,5 +73,41 @@ class DatabaseSeeder extends Seeder
                 'status' => $data['status'],
             ]);
         }
+
+        // Klaim contoh
+        $itemTemuan = Item::where('type', 'temuan')->where('user_id', '!=', $pengguna->id)->first();
+        \App\Models\Claim::create([
+            'item_id' => $itemTemuan->id,
+            'user_id' => $pengguna->id,
+            'description' => 'Ciri khusus yang hanya diketahui pemilik barang temuan.',
+            'proof' => 'Bukti kepemilikan berupa foto dan keterangan.',
+            'status' => 'menunggu',
+        ]);
+        $itemTemuan->update(['status' => 'dalam_klaim']);
+
+        $item2 = Item::where('type', 'temuan')->where('user_id', '!=', $pengguna->id)->skip(1)->first();
+        $claim2 = \App\Models\Claim::create([
+            'item_id' => $item2->id,
+            'user_id' => $pengguna->id,
+            'description' => 'Ciri khusus lain yang hanya diketahui pemilik.',
+            'proof' => 'Bukti tambahan untuk klaim disetujui.',
+            'status' => 'disetujui',
+            'handled_by' => $petugas->id,
+            'handled_at' => now(),
+        ]);
+        $item2->update(['status' => 'selesai']);
+
+        $item3 = Item::where('type', 'temuan')->where('user_id', '!=', $pengguna->id)->skip(2)->first();
+        \App\Models\Claim::create([
+            'item_id' => $item3->id,
+            'user_id' => $pengguna->id,
+            'description' => 'Ciri barang yang diajukan untuk klaim ditolak.',
+            'proof' => 'Bukti yang tidak cukup meyakinkan.',
+            'status' => 'ditolak',
+            'officer_note' => 'Bukti tidak mencukupi.',
+            'handled_by' => $petugas->id,
+            'handled_at' => now(),
+        ]);
+        $item3->update(['status' => 'aktif']);
     }
 }

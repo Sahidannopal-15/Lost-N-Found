@@ -38,6 +38,29 @@
                     <dt class="col-sm-4">Tanggal</dt>
                     <dd class="col-sm-8">{{ $item->event_date->format('d/m/Y') }}</dd>
                 </dl>
+
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    @auth
+                        @if (auth()->id() === $item->user_id)
+                            @if ($item->status !== 'dalam_klaim')
+                                <a class="btn btn-outline-secondary" href="{{ route('items.edit', $item) }}">Ubah</a>
+                                <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-danger">Hapus laporan</button>
+                                </form>
+                            @endif
+                            @if ($item->type === 'hilang' && $item->status === 'aktif')
+                                <form method="POST" action="{{ route('items.selesai', $item) }}" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary">Tandai sudah ketemu</button>
+                                </form>
+                            @endif
+                        @elseif ($item->type === 'temuan' && $item->status === 'aktif')
+                            <a class="btn btn-primary" href="{{ route('claims.create', $item) }}">Ajukan klaim</a>
+                        @endif
+                    @endauth
+                </div>
             </div>
         </div>
     </article>

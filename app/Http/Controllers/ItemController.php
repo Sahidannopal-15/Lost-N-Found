@@ -7,6 +7,7 @@ use App\Models\Item;
 use App\Models\Location;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ItemController extends Controller
@@ -63,10 +64,141 @@ class ItemController extends Controller
         return view('items.index', compact('items', 'categories', 'locations', 'hasFilters'));
     }
 
-    public function show(Item $item): View
+    public function show(Item $item)
     {
-        $item->loadMissing('location', 'category');
+        $item->loadMissing('location', 'category', 'user');
 
         return view('items.show', compact('item'));
+    }
+
+    public function create()
+    {
+        $categories = Category::orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
+
+        return view('items.create', compact('categories', 'locations'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'type' => ['required', Rule::in(['hilang', 'temuan'])],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'location_id' => ['required', 'integer', 'exists:locations,id'],
+            'event_date' => ['required', 'date', 'before_or_equal:today'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'title.required' => 'Judul barang belum diisi.',
+            'event_date.before_or_equal' => 'Tanggal tidak boleh lebih dari hari ini.',
+            'photo.mimes' => 'Foto harus berformat JPG atau PNG, maksimal 2 MB.',
+            'photo.max' => 'Foto harus berformat JPG atau PNG, maksimal 2 MB.',
+        ]);
+
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photoPath = $request->file('photo')->store('items', 'public');
+        }
+
+        Item::create([
+            'user_id' => auth()->id(),
+            'type' => $data['type'],
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'category_id' => $data['category_id'],
+            'location_id' => $data['location_id'],
+            'event_date' => $data['event_date'],
+            'photo_path' => $photoPath,
+            'status' => 'aktif',
+        ]);
+
+        return redirect()->route('items.index')->with('sukses', 'Laporan disimpan.');
+    }
+
+    public function edit(Item $item)
+    {
+        $this->authorizeOwner($item);
+
+        $categories = Category::orderBy('name')->get();
+        $locations = Location::orderBy('name')->get();
+
+        return view('items.edit', compact('item', 'categories', 'locations'));
+    }
+
+    public function update(Request $request, Item $item)
+    {
+        $this->authorizeOwner($item);
+
+        $data = $request->validate([
+            'type' => ['required', Rule::in(['hilang', 'temuan'])],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'category_id' => ['required', 'integer', 'exists:categories,id'],
+            'location_id' => ['required', 'integer', 'exists:locations,id'],
+            'event_date' => ['required', 'date', 'before_or_equal:today'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+        ], [
+            'title.required' => 'Judul barang belum diisi.',
+            'event_date.before_or_equal' => 'Tanggal tidak boleh lebih dari hari ini.',
+            'photo.mimes' => 'Foto harus berformat JPG atau PNG, maksimal 2 MB.',
+            'photo.max' => 'Foto harus berformat JPG atau PNG, maksimal 2 MB.',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            if ($item->photo_path) {
+                Storage::disk('public')->delete($item->photo_path);
+            }
+            $item->photo_path = $request->file('photo')->store('items', 'public');
+        }
+
+        $item->update([
+            'type' => $data['type'],
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'category_id' => $data['category_id'],
+            'location_id' => $data['location_id'],
+            'event_date' => $data['event_date'],
+            'photo_path' => $item->photo_path,
+        ]);
+
+        return redirect()->route('items.show', $item)->with('sukses', 'Laporan disimpan.');
+    }
+
+    public function destroy(Item $item)
+    {
+        $this->authorizeOwner($item);
+
+        if ($item->photo_path) {
+            Storage::disk('public')->delete($item->photo_path);
+        }
+
+        $item->delete();
+
+        return redirect()->route('items.index')->with('sukses', 'Laporan dihapus.');
+    }
+
+    public function selesai(Item $item)
+    {
+        $this->authorizeOwner($item);
+
+        if ($item->type !== 'hilang') {
+            abort(403);
+        }
+
+        $item->update(['status' => 'selesai']);
+
+        return back()->with('sukses', 'Laporan ditandai selesai.');
+    }
+
+    private function authorizeOwner(Item $item): void
+    {
+        if (auth()->id() !== $item->user_id) {
+            abort(403);
+        }
+
+        if ($item->status === 'dalam_klaim') {
+            abort(403);
+        }
     }
 }
