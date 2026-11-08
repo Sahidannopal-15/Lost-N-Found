@@ -8,6 +8,7 @@ Dokumen ini adalah satu-satunya sumber kebenaran untuk pengembangan. Kalau dipak
 - Kerjakan per langkah kecil (lihat bagian 13), uji tiap langkah sebelum lanjut.
 - Pakai nama tabel, kolom, status, dan route persis seperti tertulis.
 - Jangan memakai Breeze/Jetstream (Tailwind). Auth ditulis manual.
+- Tampilan memakai file desain di bagian 11. Jangan mengubah warna, font, atau nama kelas komponennya. Halaman baru memakai komponen yang sudah ada.
 
 ## 1. Ringkasan
 
@@ -99,6 +100,12 @@ Aplikasi web untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemuk
 
 Relasi: users 1–N items; users 1–N claims; categories 1–N items; locations 1–N items; items 1–N claims.
 
+**Syarat model (dipakai oleh file desain di bagian 11):**
+
+- `Item`: relasi `user()`, `location()`, `category()`; cast `protected $casts = ['event_date' => 'date'];`; accessor `code` yang menghasilkan `LNF-0007`. Saat menampilkan daftar, muat relasi dengan `Item::with('location', 'category')`.
+- `Claim`: relasi `item()`, `user()` (pengklaim), `handler()` (petugas, lewat `handled_by`).
+
+
 **Seeder:**
 
 - Akun: `admin@lostnfound.test`, `petugas@lostnfound.test`, `pengguna@lostnfound.test` (satu password demo, khusus lokal).
@@ -113,10 +120,18 @@ Relasi: users 1–N items; users 1–N claims; categories 1–N items; locations
 | HTML5, CSS3 | Lewat Blade |
 | Bootstrap 5 | Dipakai, variabelnya dioverride di satu `app.css` |
 | JavaScript + jQuery | Filter AJAX (F4), validasi form (F9) |
-| PHP + Laravel | Blade, Eloquent, migration, seeder, middleware, validation, storage. Samakan versi PHP dan Laravel di seluruh anggota |
+| PHP + Laravel | Blade, Eloquent, migration, seeder, middleware, validation, storage. Samakan versi PHP dan Laravel di seluruh anggota (lihat catatan di bawah tabel) |
 | MySQL | Database |
 | Autentikasi | Manual (`Auth::attempt`), bukan Breeze/Jetstream |
 | Leaflet, hosting | Tidak dipakai |
+
+**Catatan versi dan pengaturan:**
+
+- **Versi:** Laravel 13 membutuhkan PHP 8.3 atau lebih baru; Laravel 12 mendukung PHP 8.2 sampai 8.5. Semua anggota cek `php -v`. Kalau ada yang di bawah 8.3, buat proyek dengan `composer create-project laravel/laravel:^12.0 lostnfound`. Satu versi untuk semua anggota; `composer.lock` di-commit.
+- **Kredensial:** `.env` tidak di-commit. `.env.example` di-commit dengan `DB_CONNECTION=mysql`, `DB_DATABASE=lostnfound`, `DB_USERNAME=root`, dan `DB_PASSWORD=` **dikosongkan**.
+- **Tanpa Vite/npm:** CSS ada di `public/css/app.css`. Bootstrap 5.3.3, Bootstrap Icons 1.11.3, jQuery 3.7.1, dan Google Fonts dimuat dari CDN (butuh internet saat demo).
+- **Paginasi:** di `AppServiceProvider::boot()` tambahkan `Paginator::useBootstrapFive();` (`use Illuminate\Pagination\Paginator;`). Tanpa ini paginasi Laravel memakai gaya Tailwind.
+- **Foto:** jalankan `php artisan storage:link`.
 
 ## 8. Halaman dan route
 
@@ -165,18 +180,58 @@ Field JSON per barang: `id`, `code`, `type`, `title`, `description`, `category`,
 - Upload foto divalidasi tipe dan ukuran; disimpan di `storage/app/public` (jalankan `php artisan storage:link`).
 - API tidak membocorkan data pengguna.
 
-## 11. Arah desain UI (anti template generik)
+## 11. Desain UI
 
-- **Rasa:** papan pengumuman / label barang kampus; fungsional dan tenang, bukan landing page startup.
-- **Warna:** satu aksen merah Telkom (dari logo, sekitar `#EC1C24`), latar putih hangat `#F6F3EE`, teks charcoal `#1F1F1F`. Tanpa gradient.
-- **Tipografi:** judul Bricolage Grotesque, isi DM Sans (Google Fonts). Skala 14/16/20/28/40.
-- **Bentuk:** radius 4 px, border tipis 1 px, nyaris tanpa bayangan.
-- **Komponen khas:** kartu barang seperti "tag" dengan kode laporan (LNF-0001); status sebagai badge/stempel teks (AKTIF, DALAM KLAIM, SELESAI).
-- **Ikon:** Bootstrap Icons saja, tanpa emoji.
-- **Bootstrap:** override variabel (`--bs-primary` dll.) di satu `app.css`; tidak ada `btn-primary` biru bawaan.
-- **Data:** pakai data seeder realistis, tanpa "Lorem ipsum" atau nama generik.
-- **Dilarang:** gradient, glassmorphism, emoji sebagai ikon, hero tengah "Welcome to…", semua kartu bulat besar, lebih dari satu warna aksen.
-- **Proses:** buat layout dan `app.css` dulu, lalu satu halaman (katalog), tinjau, baru halaman lain memakai komponen yang sama.
+Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diubah.** Gagasan desainnya: tiap laporan tampil sebagai **tiket barang** (kartu dengan garis sobekan, jenis laporan, kode, dan status). Itu satu-satunya elemen yang mencolok; sisanya sengaja tenang.
+
+**Letak file di proyek Laravel:**
+
+| File | Letak |
+|---|---|
+| `app.css` | `public/css/app.css` |
+| Layout | `resources/views/layouts/app.blade.php` |
+| Kartu tiket barang | `resources/views/partials/tiket.blade.php` |
+| Badge status | `resources/views/partials/status.blade.php` |
+| Keadaan kosong | `resources/views/partials/kosong.blade.php` |
+
+**Cara memakai:**
+
+- Setiap halaman: `@extends('layouts.app')`, judul lewat `@section('judul', '...')`, isi di `@section('isi')`. Skrip halaman lewat `@push('skrip')`.
+- Daftar barang: `<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">` dan tiap barang `<div class="col">@include('partials.tiket', ['item' => $item])</div>`. Hasil AJAX di jQuery meniru struktur HTML `partials/tiket` persis.
+- Status barang: `@include('partials.status', ['status' => $item->status])`.
+- Daftar kosong: `@include('partials.kosong', [...])` (contoh parameter ada di komentar file).
+- Tombol: `btn-primary` untuk aksi utama, `btn-outline-secondary` untuk Batal/Kembali/Tolak, `btn-outline-danger` untuk Hapus.
+- Tabel admin dan petugas: `<div class="panel table-responsive"><table class="table tabel-admin">`.
+- Pesan flash memakai kunci sesi `sukses` dan `galat`. Pesan validasi Laravel ditampilkan di bawah tiap kolom dengan `is-invalid` dan `invalid-feedback`.
+
+**Token desain (ringkas):**
+
+| Peran | Nilai |
+|---|---|
+| Merah Telkom (aksen, garis atas) | `#EC1C24` |
+| Merah tekan (tombol, tautan, label "Ditemukan") | `#C8101A` |
+| Tinta (teks utama, label "Hilang") | `#26272A` |
+| Tinta pudar (teks sekunder) | `#5B5D61` |
+| Kertas (latar halaman) | `#EEF0F2` |
+| Garis (border, garis sobekan) | `#D3D5D9` |
+| Font judul / isi | Archivo / Plus Jakarta Sans |
+| Skala teks | 14 / 16 / 20 / 28 / 40 px |
+| Radius lencana / kontrol / tiket | 2 / 4 / 8 px |
+
+**Aturan:**
+
+- Tanpa gradient, glassmorphism, bayangan, atau gerak otomatis.
+- Tanpa emoji sebagai ikon (Bootstrap Icons saja), tanpa label KAPITAL, tanpa `btn-primary` biru bawaan.
+- Status dibedakan lewat ikon, bentuk garis, dan teks, bukan warna saja.
+- Data seeder realistis, tanpa "Lorem ipsum" atau nama generik.
+- Halaman baru memakai komponen yang sudah ada. Jangan menambah warna, font, atau gaya baru.
+
+**Teks antarmuka (bahasa Indonesia, nama aksi sama di seluruh alur):**
+
+- Tombol: Cari, Lapor barang, Simpan laporan, Simpan perubahan, Hapus laporan, Tandai sudah ketemu, Ajukan klaim, Kirim klaim, Setujui dan serahkan, Tolak klaim, Masuk, Buat akun, Keluar, Tambah kategori, Hapus filter.
+- Error (spesifik, tidak minta maaf): "Email belum diisi.", "Format email tidak valid, contoh: nama@email.com.", "Password minimal 8 karakter.", "Konfirmasi password tidak sama.", "Email atau password salah. Periksa lagi, lalu coba masuk.", "Judul barang belum diisi.", "Tanggal tidak boleh lebih dari hari ini.", "Foto harus berformat JPG atau PNG, maksimal 2 MB.", "Ciri barang minimal 20 karakter. Sebutkan hal yang hanya diketahui pemilik, misalnya isi tas atau goresan.", "Kategori ini masih dipakai 5 laporan, jadi belum bisa dihapus. Pindahkan laporannya ke kategori lain dulu."
+- Sukses: "Laporan disimpan.", "Klaim dikirim. Petugas akan memeriksa buktimu.", "Klaim disetujui. Serah terima tercatat."
+- Kosong: katalog tanpa hasil: "Belum ada barang yang cocok. Ubah kata kunci atau hapus filter. Barangmu belum dilaporkan? Buat laporan baru." Katalog kosong total: "Belum ada laporan. Laporkan barang hilang atau temuan pertama." Riwayat: "Kamu belum punya laporan atau klaim. Kehilangan atau menemukan sesuatu? Buat laporan pertamamu." Klaim masuk (petugas): "Tidak ada klaim yang menunggu."
 
 ## 12. Di luar scope
 
@@ -187,7 +242,7 @@ Integrasi sistem akademik; push/email/WhatsApp dan notifikasi dalam aplikasi (di
 Urutan ini murni soal ketergantungan antar fitur (bukan jadwal):
 
 1. Setup Laravel, koneksi MySQL, migration 5 tabel, model dan relasi, seeder.
-2. Layout Blade + `app.css` (bagian 11).
+2. Pasang file desain dari bagian 11 (`app.css`, layout, partials), lalu uji dengan satu halaman katalog.
 3. F1 autentikasi + middleware role (semua fitur lain bergantung padanya).
 4. F2 CRUD kategori dan lokasi (dropdown laporan butuh datanya).
 5. F3 CRUD laporan + upload foto.
@@ -202,4 +257,4 @@ Urutan ini murni soal ketergantungan antar fitur (bukan jadwal):
 - F1–F9 bisa didemokan memakai tiga akun seeder.
 - CRUD kategori, lokasi, dan laporan tersambung ke MySQL.
 - Seluruh halaman di bagian 8 bisa diakses dengan data seeder.
-- Desain mengikuti bagian 11 (tanpa warna biru Bootstrap default, tanpa emoji sebagai ikon, tanpa teks placeholder).
+- Semua halaman memakai layout dan partials dari bagian 11, tanpa warna biru Bootstrap bawaan, tanpa emoji sebagai ikon, dan tanpa teks placeholder.
