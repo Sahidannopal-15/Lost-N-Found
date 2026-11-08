@@ -1,59 +1,117 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lost n Found Kampus
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemukan di kampus. Pengguna membuat laporan (foto, kategori, lokasi, tanggal), semua laporan tampil di katalog yang bisa dicari dan difilter, dan pemilik barang mengajukan klaim yang diverifikasi petugas sebelum barang diserahkan.
 
-## About Laravel
+> Panduan pengembangan lengkap ada di [prd.md](prd.md).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Status implementasi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- ✅ Setup Laravel 12 + koneksi SQLite/MySQL
+- ✅ Migration tabel: `users`, `categories`, `locations`, `items`
+- ✅ Model: `User`, `Category`, `Location`, `Item` (relasi + accessor `code`)
+- ✅ Katalog beranda (`GET /`) dengan kartu tiket
+- ✅ Detail barang (`GET /items/{item}`)
+- ✅ REST API read-only: `GET /api/items`, `GET /api/items/{id}`
+- ✅ Filter katalog via AJAX (jQuery) tanpa reload halaman
+- ✅ Paginasi Bootstrap 5 (`Paginator::useBootstrapFive()`)
+- ✅ Tes fitur katalog (`tests/Feature/CatalogApiTest.php`)
+- ⏳ Autentikasi, CRUD laporan/klaim, master data admin (sesuai urutan di prd.md §13)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech stack
 
-## Learning Laravel
+- PHP 8.2+, Laravel 12
+- Blade + Bootstrap 5.3.3 + Bootstrap Icons 1.11.3
+- jQuery 3.7.1 (CDN)
+- MySQL / SQLite (lokal)
+- PHPUnit 11
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Persyaratan
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP `^8.2`
+- Composer
+- Node.js & npm (opsional, hanya untuk Vite; aplikasi memakai CSS statis)
+- Database MySQL atau SQLite
 
-## Laravel Sponsors
+## Instalasi
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# 1. Clone
+git clone https://github.com/Sahidannopal-15/Lost-N-Found.git
+cd Lost-N-Found
 
-### Premium Partners
+# 2. Dependensi
+composer install
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# 3. Environment
+cp .env.example .env
+php artisan key:generate
+```
 
-## Contributing
+Sesuaikan `.env`:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=lostnfound
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## Code of Conduct
+Untuk SQLite (lokal cepat), cukup set `DB_CONNECTION=sqlite` dan biarkan `DB_DATABASE` kosong (default `database/database.sqlite`).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# 4. Migrasi (dan seed bila tersedia)
+php artisan migrate --seed
 
-## Security Vulnerabilities
+# 5. Storage link (untuk foto)
+php artisan storage:link
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 6. Jalankan
+php artisan serve
+```
 
-## License
+Buka http://127.0.0.1:8000
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Struktur file khusus aplikasi
+
+| Tanggung jawab | File |
+|---|---|
+| Model & relasi | `app/Models/User.php`, `Category.php`, `Location.php`, `Item.php` |
+| Controller katalog | `app/Http/Controllers/ItemController.php` |
+| Controller API | `app/Http/Controllers/Api/ItemController.php` |
+| Paginasi Bootstrap | `app/Providers/AppServiceProvider.php` |
+| Route halaman | `routes/web.php` |
+| Route API | `routes/api.php` |
+| Skema basis data | `database/migrations/2026_11_08_00000*_create_*_table.php` |
+| Data demo | `database/seeders/DatabaseSeeder.php` |
+| Halaman Blade | `resources/views/items/index.blade.php`, `show.blade.php` |
+| Partials | `resources/views/partials/tiket.blade.php`, `status.blade.php`, `kosong.blade.php` |
+| Layout | `resources/views/layouts/app.blade.php` |
+| CSS aplikasi | `public/css/app.css` |
+| Pengujian | `tests/Feature/CatalogApiTest.php` |
+
+## Endpoint API
+
+| Method | Path | Keterangan |
+|---|---|---|
+| GET | `/api/items` | Daftar barang terpaginasi (9/halaman), mendukung `q`, `type`, `category_id`, `location_id`, `status`, `date_from`, `page` |
+| GET | `/api/items/{id}` | Detail satu barang |
+
+Field JSON per barang: `id`, `code`, `type`, `title`, `description`, `category`, `location`, `event_date`, `photo_url`, `status`, `created_at`.
+
+## Pengujian
+
+```bash
+php artisan test
+```
+
+Tes katalog (filter AJAX, server-side filter, detail) berada di `tests/Feature/CatalogApiTest.php`.
+
+## Konvensi desain
+
+Mengikuti prd.md §11: tanpa gradient, glassmorphism, bayangan, atau gerak otomatis; tanpa emoji sebagai ikon (Bootstrap Icons saja); tanpa label KAPITAL; tanpa `btn-primary` biru bawaan. Status dibedakan lewat ikon, bentuk garis, dan teks, bukan warna saja.
+
+## Lisensi
+
+MIT — lihat [Laravel License](https://opensource.org/licenses/MIT).
