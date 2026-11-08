@@ -1,0 +1,604 @@
+/* ==========================================================================
+   Lost n Found Kampus  |  public/css/app.css
+   Dimuat SETELAH bootstrap.min.css. Ini satu-satunya file gaya buatan sendiri.
+
+   Satu hal yang sengaja mencolok: TIKET BARANG (kartu dengan garis sobekan,
+   kode laporan, dan jenis laporan). Semua yang lain dibuat tenang.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Token
+   -------------------------------------------------------------------------- */
+:root {
+  /* Warna (keluarga warna logo Telkom: merah + abu dingin) */
+  --merah: #EC1C24;          /* merah logo: dipakai untuk tanda dan garis aksen */
+  --merah-tekan: #C8101A;    /* merah untuk tombol/tautan (kontras 5,9:1 di atas putih) */
+  --merah-gelap: #9E0B13;    /* hover dan aktif */
+  --tinta: #26272A;          /* teks utama */
+  --tinta-pudar: #5B5D61;    /* teks sekunder (kontras 6,6:1 di atas putih) */
+  --garis: #D3D5D9;          /* border dan garis sobekan */
+  --kertas: #EEF0F2;         /* latar halaman (abu dingin, bukan krem) */
+  --putih: #FFFFFF;
+  --redup: #E4E6E9;          /* permukaan redup: foto kosong, status "dalam klaim" */
+  --sobekan: #F7F8F9;        /* latar bagian bawah tiket */
+
+  /* Tipografi */
+  --font-judul: "Archivo", "Segoe UI", system-ui, sans-serif;
+  --font-isi: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Bentuk: radius berbeda sesuai tingkatnya */
+  --r-lencana: 2px;
+  --r-kontrol: 4px;
+  --r-tiket: 8px;
+
+  /* Override variabel Bootstrap 5.3 (nilai harfiah supaya variabel -rgb ikut) */
+  --bs-body-font-family: var(--font-isi);
+  --bs-body-font-size: 1rem;
+  --bs-body-font-weight: 400;
+  --bs-body-line-height: 1.55;
+  --bs-body-color: #26272A;
+  --bs-body-color-rgb: 38, 39, 42;
+  --bs-body-bg: #EEF0F2;
+  --bs-body-bg-rgb: 238, 240, 242;
+  --bs-emphasis-color: #26272A;
+  --bs-secondary-color: #5B5D61;
+  --bs-heading-color: #26272A;
+  --bs-primary: #C8101A;
+  --bs-primary-rgb: 200, 16, 26;
+  --bs-link-color: #C8101A;
+  --bs-link-color-rgb: 200, 16, 26;
+  --bs-link-hover-color: #9E0B13;
+  --bs-link-hover-color-rgb: 158, 11, 19;
+  --bs-border-color: #D3D5D9;
+  --bs-border-radius: 4px;
+  --bs-border-radius-sm: 2px;
+  --bs-border-radius-lg: 8px;
+  --bs-focus-ring-color: rgba(38, 39, 42, .25);
+}
+
+/* --------------------------------------------------------------------------
+   2. Dasar dan tipografi (skala 14 / 16 / 20 / 28 / 40)
+   -------------------------------------------------------------------------- */
+body {
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--font-judul);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--bs-heading-color);
+}
+
+h1, .h1 { font-size: clamp(1.75rem, 1.35rem + 1.8vw, 2.5rem); font-weight: 800; }   /* 28 sampai 40 */
+h2, .h2 { font-size: clamp(1.375rem, 1.15rem + 1vw, 1.75rem); }                      /* sampai 28 */
+h3, .h3 { font-size: 1.25rem; }                                                      /* 20 */
+h4, .h4, h5, .h5, h6, .h6 { font-size: 1rem; }                                       /* 16 */
+small, .small { font-size: .875rem; }                                                /* 14 */
+
+.teks-pudar { color: var(--tinta-pudar); }
+.prose { max-width: 65ch; }
+
+a { text-underline-offset: 3px; }
+
+@media (min-width: 1400px) {
+  .container { max-width: 1140px; }
+}
+
+/* --------------------------------------------------------------------------
+   3. Kerangka halaman
+   -------------------------------------------------------------------------- */
+.lewati-ke-konten {
+  position: absolute;
+  left: .5rem;
+  top: -4rem;
+  z-index: 2000;
+  padding: .625rem 1rem;
+  background: var(--tinta);
+  color: #fff;
+  border-radius: var(--r-kontrol);
+}
+.lewati-ke-konten:focus { top: .5rem; color: #fff; }
+
+.bar-atas {
+  background: var(--putih);
+  border-top: 4px solid var(--merah);
+  border-bottom: 1px solid var(--garis);
+}
+.bar-atas .navbar { padding-block: .25rem; }
+
+.bar-atas .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  font-family: var(--font-judul);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+}
+.merek-tanda {
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--merah);
+  color: #fff;
+  border-radius: var(--r-kontrol);
+  font-size: .9375rem;
+}
+
+.bar-atas .nav-link {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: .75rem;
+  font-weight: 500;
+  color: var(--tinta);
+  text-decoration: none;
+}
+.bar-atas .nav-link:hover { color: var(--merah-tekan); }
+.bar-atas .nav-link.active {
+  color: var(--merah-tekan);
+  font-weight: 600;
+  box-shadow: inset 0 -3px 0 var(--merah);
+}
+.bar-atas .nama-pengguna { color: var(--tinta-pudar); font-size: .875rem; }
+.nav-tombol {
+  width: 100%;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  font-weight: 500;
+}
+.bar-atas .navbar-toggler {
+  min-width: 44px;
+  min-height: 44px;
+  border-color: var(--garis);
+}
+.bar-atas .navbar-toggler:focus { box-shadow: none; }
+
+.halaman { flex: 1 0 auto; padding-block: 1.5rem 3rem; }
+.judul-halaman { margin-bottom: 1.5rem; }
+.judul-halaman h1 { margin-bottom: .25rem; }
+.judul-halaman p { margin-bottom: 0; color: var(--tinta-pudar); }
+
+.panel {
+  background: var(--putih);
+  border: 1px solid var(--garis);
+  border-radius: var(--r-tiket);
+}
+.panel--isi { padding: 1.25rem; }
+
+.kaki {
+  flex-shrink: 0;
+  background: var(--putih);
+  border-top: 1px solid var(--garis);
+  padding-block: 1.5rem;
+  font-size: .875rem;
+  color: var(--tinta-pudar);
+}
+.kaki p { margin: 0; }
+
+/* Bilah pencarian dan penyaring katalog */
+.penyaring {
+  background: var(--putih);
+  border: 1px solid var(--garis);
+  border-radius: var(--r-tiket);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   4. Tiket barang (kartu katalog)  <-- satu-satunya elemen yang mencolok
+   Struktur: .tiket > .tiket__tautan (foto + isi) + .tiket__sobekan (jenis, kode, status)
+   -------------------------------------------------------------------------- */
+.tiket {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--putih);
+  border: 1px solid var(--garis);
+  border-radius: var(--r-tiket);
+  overflow: hidden;
+}
+
+.tiket__tautan {
+  display: flex;                 /* HP: foto di kiri, teks di kanan */
+  flex: 1 1 auto;
+  color: inherit;
+  text-decoration: none;
+}
+.tiket__tautan:hover .tiket__judul {
+  color: var(--merah-tekan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.tiket__tautan:focus-visible { outline-offset: -3px; }
+
+.tiket__foto {
+  flex: none;
+  width: 104px;
+  min-height: 104px;
+  display: grid;
+  place-items: center;
+  background: var(--redup);
+  color: var(--tinta-pudar);
+  font-size: 1.75rem;
+}
+.tiket__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tiket__isi { min-width: 0; padding: .875rem 1rem; }
+
+.tiket__judul {
+  margin: 0 0 .375rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tiket__info {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  margin: 0;
+  font-size: .875rem;
+  color: var(--tinta-pudar);
+}
+.tiket__info + .tiket__info { margin-top: .125rem; }
+
+/* Garis sobekan + bagian bawah tiket */
+.tiket__sobekan {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .5rem .75rem;
+  padding: .625rem 1rem;
+  background: var(--sobekan);
+  border-top: 2px dashed var(--garis);
+}
+.tiket__sobekan .status { margin-left: auto; }
+
+.tiket__jenis {
+  padding: .125rem .5rem;
+  border-radius: var(--r-lencana);
+  font-size: .875rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #fff;
+}
+.tiket__jenis--temuan { background: var(--merah-tekan); }  /* menunggu pemiliknya */
+.tiket__jenis--hilang { background: var(--tinta); }        /* sedang dicari pemiliknya */
+
+.tiket__kode {
+  font-size: .875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .02em;
+  color: var(--tinta-pudar);
+}
+
+@media (min-width: 576px) {
+  .tiket__tautan { flex-direction: column; }             /* tablet ke atas: foto di atas */
+  .tiket__foto { width: 100%; aspect-ratio: 4 / 3; min-height: 0; font-size: 2.5rem; }
+  .tiket__judul { font-size: 1.25rem; }
+}
+
+/* --------------------------------------------------------------------------
+   5. Badge status (dibedakan lewat ikon, bentuk garis, dan teks, bukan warna saja)
+   -------------------------------------------------------------------------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .125rem .5rem;
+  border-radius: var(--r-lencana);
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.status .bi { font-size: .875rem; }
+.status--aktif {
+  color: var(--tinta);
+  background: var(--putih);
+  border: 1px solid var(--tinta);
+}
+.status--aktif .bi { font-size: .5rem; }
+.status--dalam-klaim {
+  color: var(--tinta);
+  background: var(--redup);
+  border: 1px solid var(--redup);
+}
+.status--selesai {
+  color: var(--tinta-pudar);
+  background: transparent;
+  border: 1px dashed var(--tinta-pudar);
+}
+
+/* --------------------------------------------------------------------------
+   6. Halaman detail barang (tiket versi besar)
+   -------------------------------------------------------------------------- */
+.detail { overflow: hidden; }
+.detail__foto {
+  display: grid;
+  place-items: center;
+  background: var(--redup);
+  color: var(--tinta-pudar);
+  font-size: 3rem;
+  aspect-ratio: 4 / 3;
+}
+.detail__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.detail__isi { padding: 1.25rem; }
+.detail__sobekan {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .75rem 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--sobekan);
+  border-top: 2px dashed var(--garis);
+}
+.detail__sobekan .aksi { margin-left: auto; display: flex; gap: .5rem; flex-wrap: wrap; }
+
+.data-barang {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .5rem 1.25rem;
+  margin: 0;
+}
+.data-barang dt { font-size: .875rem; font-weight: 500; color: var(--tinta-pudar); }
+.data-barang dd { margin: 0; }
+
+@media (min-width: 992px) {
+  .detail { display: grid; grid-template-columns: 5fr 7fr; }
+  .detail__foto { aspect-ratio: auto; min-height: 100%; }
+  .detail__sobekan { grid-column: 1 / -1; }
+}
+
+/* --------------------------------------------------------------------------
+   7. Keadaan kosong
+   -------------------------------------------------------------------------- */
+.kosong {
+  background: var(--putih);
+  border: 1px dashed var(--tinta-pudar);
+  border-radius: var(--r-tiket);
+  padding: 2rem 1.25rem;
+}
+.kosong > .bi { display: block; margin-bottom: .75rem; font-size: 2rem; color: var(--tinta-pudar); }
+.kosong h2 { margin-bottom: .5rem; }
+.kosong p { margin-bottom: 1.25rem; color: var(--tinta-pudar); }
+.kosong__aksi { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* --------------------------------------------------------------------------
+   8. Tombol
+   -------------------------------------------------------------------------- */
+.btn {
+  --bs-btn-border-radius: var(--r-kontrol);
+  --bs-btn-font-weight: 600;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-padding-y: .625rem;
+  --bs-btn-font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: 44px;
+  transition: background-color .12s, border-color .12s, color .12s;
+}
+.btn-sm {
+  --bs-btn-padding-x: .75rem;
+  --bs-btn-padding-y: .375rem;
+  --bs-btn-font-size: .875rem;
+  min-height: 40px;
+}
+
+/* Utama: aksi yang dimaksud halaman ini (Simpan, Ajukan klaim, Setujui) */
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--merah-tekan);
+  --bs-btn-border-color: var(--merah-tekan);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--merah-gelap);
+  --bs-btn-hover-border-color: var(--merah-gelap);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--merah-gelap);
+  --bs-btn-active-border-color: var(--merah-gelap);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--tinta-pudar);
+  --bs-btn-disabled-border-color: var(--tinta-pudar);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--merah-tekan);
+  --bs-btn-border-color: var(--merah-tekan);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--merah-tekan);
+  --bs-btn-hover-border-color: var(--merah-tekan);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--merah-gelap);
+  --bs-btn-active-border-color: var(--merah-gelap);
+}
+/* Sekunder: Batal, Kembali, Hapus filter, Tolak klaim */
+.btn-secondary,
+.btn-outline-secondary {
+  --bs-btn-color: var(--tinta);
+  --bs-btn-bg: var(--putih);
+  --bs-btn-border-color: var(--tinta-pudar);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--tinta);
+  --bs-btn-hover-border-color: var(--tinta);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--tinta);
+  --bs-btn-active-border-color: var(--tinta);
+}
+/* Merusak data: Hapus laporan, Hapus kategori */
+.btn-danger,
+.btn-outline-danger {
+  --bs-btn-color: var(--merah-tekan);
+  --bs-btn-bg: var(--putih);
+  --bs-btn-border-color: var(--merah-tekan);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--merah-tekan);
+  --bs-btn-hover-border-color: var(--merah-tekan);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--merah-gelap);
+  --bs-btn-active-border-color: var(--merah-gelap);
+}
+
+/* --------------------------------------------------------------------------
+   9. Form
+   -------------------------------------------------------------------------- */
+.form-label {
+  margin-bottom: .375rem;
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--tinta);
+}
+.form-text { font-size: .875rem; color: var(--tinta-pudar); }
+
+.form-control,
+.form-select {
+  min-height: 44px;
+  padding: .625rem .75rem;
+  font-size: 1rem;
+  color: var(--tinta);
+  background-color: var(--putih);
+  border: 1px solid var(--tinta-pudar);
+  border-radius: var(--r-kontrol);
+}
+textarea.form-control { min-height: 7rem; }
+.form-control::placeholder { color: #6B6E73; }
+.form-control:disabled,
+.form-select:disabled { background-color: var(--redup); }
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--tinta);
+  outline: 3px solid var(--tinta);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid { border-color: var(--merah-tekan); border-width: 2px; }
+.invalid-feedback {
+  font-size: .875rem;
+  font-weight: 500;
+  color: var(--merah-tekan);
+}
+
+.form-check-input { width: 1.25rem; height: 1.25rem; border-color: var(--tinta-pudar); }
+.form-check-input:checked {
+  background-color: var(--merah-tekan);
+  border-color: var(--merah-tekan);
+}
+.form-check-input:focus {
+  border-color: var(--tinta);
+  outline: 3px solid var(--tinta);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   10. Tabel admin dan petugas
+   Pakai: <div class="panel table-responsive"><table class="table tabel-admin">
+   -------------------------------------------------------------------------- */
+.tabel-admin { margin-bottom: 0; font-size: 1rem; }
+.tabel-admin > :not(caption) > * > * {
+  background-color: var(--putih);
+  box-shadow: none;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid var(--garis);
+  vertical-align: middle;
+}
+.tabel-admin thead th {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--tinta-pudar);
+  white-space: nowrap;
+  border-bottom: 2px solid var(--tinta);
+}
+.tabel-admin tbody tr:last-child > * { border-bottom: 0; }
+.tabel-admin tbody tr:hover > * { background-color: var(--sobekan); }
+.tabel-admin .kolom-aksi { width: 1%; white-space: nowrap; text-align: right; }
+.tabel-admin .kolom-aksi form { display: inline; }
+
+/* --------------------------------------------------------------------------
+   11. Pesan, paginasi, dan komponen Bootstrap lain yang bisa menampilkan biru
+   -------------------------------------------------------------------------- */
+.alert {
+  padding: .75rem 1rem;
+  color: var(--tinta);
+  background: var(--putih);
+  border: 1px solid var(--garis);
+  border-left-width: 4px;
+  border-radius: var(--r-kontrol);
+}
+.alert-success { border-left-color: var(--tinta); }
+.alert-danger { border-left-color: var(--merah); }
+.alert-info,
+.alert-warning { border-left-color: var(--tinta-pudar); }
+.alert ul { margin: .5rem 0 0; padding-left: 1.25rem; }
+
+.pagination {
+  --bs-pagination-color: var(--tinta);
+  --bs-pagination-bg: var(--putih);
+  --bs-pagination-border-color: var(--garis);
+  --bs-pagination-border-radius: var(--r-kontrol);
+  --bs-pagination-hover-color: var(--merah-tekan);
+  --bs-pagination-hover-bg: var(--putih);
+  --bs-pagination-hover-border-color: var(--tinta);
+  --bs-pagination-focus-color: var(--tinta);
+  --bs-pagination-focus-bg: var(--putih);
+  --bs-pagination-focus-box-shadow: none;
+  --bs-pagination-active-color: #fff;
+  --bs-pagination-active-bg: var(--tinta);
+  --bs-pagination-active-border-color: var(--tinta);
+  --bs-pagination-disabled-color: var(--tinta-pudar);
+  --bs-pagination-disabled-bg: var(--redup);
+  --bs-pagination-disabled-border-color: var(--garis);
+}
+.page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* --------------------------------------------------------------------------
+   12. Fokus keyboard dan gerak
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+}
+.btn:focus-visible,
+.page-link:focus-visible,
+.nav-link:focus-visible,
+.navbar-toggler:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
