@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Lost n Found Kampus  |  public/css/app.css
+   Findo  |  public/css/app.css
    Dimuat SETELAH bootstrap.min.css. Ini satu-satunya file gaya buatan sendiri.
 
    Satu hal yang sengaja mencolok: TIKET BARANG (kartu dengan garis sobekan,
@@ -180,11 +180,48 @@ a { text-underline-offset: 3px; }
   flex-shrink: 0;
   background: var(--putih);
   border-top: 1px solid var(--garis);
-  padding-block: 1.5rem;
+  padding-block: 2.5rem 1.5rem;
   font-size: .875rem;
   color: var(--tinta-pudar);
 }
 .kaki p { margin: 0; }
+.kaki__grid { margin-bottom: 1.5rem; }
+.kaki__merek {
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  font-family: var(--font-judul);
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: var(--tinta);
+  text-decoration: none;
+}
+.kaki__merek:hover { color: var(--merah-tekan); }
+.kaki__deskripsi { max-width: 38ch; line-height: 1.6; }
+.kaki__judul {
+  font-family: var(--font-judul);
+  font-size: .8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--tinta);
+  margin: 0 0 .75rem;
+}
+.kaki__tautan {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.kaki__tautan a { color: var(--tinta-pudar); text-decoration: none; }
+.kaki__tautan a:hover { color: var(--merah-tekan); text-decoration: underline; }
+.kaki__info li { display: flex; align-items: center; gap: .5rem; }
+.kaki__pemisah { border-color: var(--garis); margin: 0 0 1rem; }
+.kaki__bawah { font-size: .8125rem; }
+.kaki__kredit { color: var(--tinta); }
 
 /* Bilah pencarian dan penyaring katalog */
 .penyaring {

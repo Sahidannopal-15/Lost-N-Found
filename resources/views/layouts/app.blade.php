@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('judul', 'Lost n Found Kampus')</title>
+    <title>@yield('judul', 'Findo')</title>
 
     {{-- Font: Archivo (judul) + Plus Jakarta Sans (isi). Ada font cadangan di app.css. --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -39,7 +39,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <span class="merek-tanda" aria-hidden="true"><i class="bi bi-tag-fill"></i></span>
-                    Lost n Found
+                    Findo
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#menu-utama" aria-controls="menu-utama"
@@ -105,7 +105,37 @@
 
     <footer class="kaki">
         <div class="container">
-            <p>Lost n Found Kampus. Tugas besar Pemrograman Web, Universitas Telkom.</p>
+            <div class="row g-4 kaki__grid">
+                <div class="col-12 col-md-5">
+                    <a class="kaki__merek" href="{{ url('/') }}">
+                        <span class="merek-tanda" aria-hidden="true"><i class="bi bi-tag-fill"></i></span>
+                        Findo
+                    </a>
+                    <p class="kaki__deskripsi mt-2 mb-0">
+                        Platform pelaporan dan pencarian barang hilang &amp; temuan di lingkungan Telkom University.
+                        Membantu menghubungkan pemilik dengan penemu secara cepat dan aman.
+                    </p>
+                </div>
+                <div class="col-6 col-md-3">
+                    <h3 class="kaki__judul">Navigasi</h3>
+                    <ul class="kaki__tautan">
+                        <li><a href="{{ url('/') }}">Katalog</a></li>
+                        <li><a href="{{ url('/login') }}">Masuk</a></li>
+                        <li><a href="{{ url('/register') }}">Buat akun</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-4">
+                    <h3 class="kaki__judul">Kontak</h3>
+                    <ul class="kaki__tautan kaki__info">
+                        <li><i class="bi bi-geo-alt" aria-hidden="true"></i> Telkom University, Bandung</li>
+                        <li><i class="bi bi-envelope" aria-hidden="true"></i> support@findo.id</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="kaki__pemisah">
+            <div class="kaki__bawah d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-1">
+                <p class="mb-0">&copy; {{ date('Y') }} Findo. Hak cipta dilindungi.</p>
+            </div>
         </div>
     </footer>
 

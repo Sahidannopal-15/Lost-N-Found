@@ -142,8 +142,9 @@
 
             const $sobekan = $('<footer>').addClass('tiket__sobekan');
             const jenis = item.type === 'temuan' ? 'Ditemukan' : 'Hilang';
+            const jenisKelas = item.type === 'temuan' ? 'temuan' : 'hilang';
             $sobekan.append($('<span>')
-                .addClass('tiket__jenis tiket__jenis--' + item.type)
+                .addClass('tiket__jenis tiket__jenis--' + jenisKelas)
                 .text(jenis));
             $sobekan.append($('<span>').addClass('tiket__kode').text(item.code));
 
@@ -153,8 +154,11 @@
                 selesai: ['Selesai', 'bi-check2-circle']
             };
             const statusItem = petaStatus[item.status] || ['Status tidak diketahui', 'bi-circle'];
+            const statusKelas = ['aktif', 'dalam_klaim', 'selesai'].includes(item.status)
+                ? item.status.replace(/_/g, '-')
+                : 'tidak-diketahui';
             $sobekan.append($('<span>')
-                .addClass('status status--' + String(item.status).replace(/_/g, '-'))
+                .addClass('status status--' + statusKelas)
                 .append($('<i>').addClass('bi ' + statusItem[1]).attr('aria-hidden', 'true'))
                 .append(document.createTextNode(statusItem[0])));
 
