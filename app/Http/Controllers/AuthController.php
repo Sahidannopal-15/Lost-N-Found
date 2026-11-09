@@ -31,7 +31,7 @@ class AuthController extends Controller
                 $request->session()->regenerateToken();
 
                 return back()->withErrors([
-                    'email' => 'Akun Anda dinonaktifkan. Hubungi admin.',
+                    'email' => 'Akunmu dinonaktifkan. Hubungi admin.',
                 ])->onlyInput('email');
             }
 

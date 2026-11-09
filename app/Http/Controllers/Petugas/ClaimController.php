@@ -25,6 +25,10 @@ class ClaimController extends Controller
             return back()->with('galat', 'Klaim tidak dapat diproses.');
         }
 
+        if ($claim->user_id === auth()->id()) {
+            return back()->with('galat', 'Tidak dapat memproses klaim milik sendiri.');
+        }
+
         $claim->update([
             'status' => 'disetujui',
             'handled_by' => auth()->id(),
@@ -40,6 +44,10 @@ class ClaimController extends Controller
     {
         if ($claim->status !== 'menunggu') {
             return back()->with('galat', 'Klaim tidak dapat diproses.');
+        }
+
+        if ($claim->user_id === auth()->id()) {
+            return back()->with('galat', 'Tidak dapat memproses klaim milik sendiri.');
         }
 
         $data = $request->validate([

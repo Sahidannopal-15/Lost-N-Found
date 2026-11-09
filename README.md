@@ -17,7 +17,8 @@ Panduan pengembangan lengkap ada di [prd.md](prd.md).
 | ✅ | Filter katalog via AJAX (jQuery) tanpa reload halaman | Complete |
 | ✅ | Paginasi Bootstrap 5 (`Paginator::useBootstrapFive()`) | Complete |
 | ✅ | Tes fitur katalog (`tests/Feature/CatalogApiTest.php`) | Complete |
-| ⏳ | Autentikasi, CRUD laporan/klaim, master data admin | Dalam pengembangan |
+| ✅ | Autentikasi, CRUD laporan/klaim, master data admin | Complete |
+| ✅ | Dashboard admin dan kelola pengguna (opsional) | Complete |
 
 ## Tech stack
 

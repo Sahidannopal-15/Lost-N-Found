@@ -167,7 +167,11 @@ class ItemController extends Controller
 
     public function destroy(Item $item)
     {
-        $this->authorizeOwner($item);
+        $isAdmin = auth()->check() && auth()->user()->role === 'admin';
+
+        if (! $isAdmin) {
+            $this->authorizeOwner($item);
+        }
 
         if ($item->photo_path) {
             Storage::disk('public')->delete($item->photo_path);

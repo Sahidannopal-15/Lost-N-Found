@@ -11,6 +11,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Definisi angka: Total laporan = semua status; Total klaim = semua status;
+        // Barang selesai = item berstatus selesai; Total pengguna = semua akun termasuk nonaktif.
         return view('admin.dashboard', [
             'totalLaporan' => Item::count(),
             'totalKlaim' => Claim::count(),

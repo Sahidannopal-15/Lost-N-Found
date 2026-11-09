@@ -33,17 +33,19 @@
                             <td>{{ $claim->description }}</td>
                             <td>{{ $claim->proof }}</td>
                             <td class="text-end">
-                                <form method="POST" action="{{ route('petugas.claims.approve', $claim) }}" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary btn-sm">Setujui dan serahkan</button>
-                                </form>
-                                <form method="POST" action="{{ route('petugas.claims.reject', $claim) }}" class="d-inline">
-                                    @csrf
-                                    <div class="input-group input-group-sm mt-2">
-                                        <input type="text" name="officer_note" class="form-control" placeholder="Catatan penolakan" required>
-                                        <button type="submit" class="btn btn-outline-danger">Tolak klaim</button>
-                                    </div>
-                                </form>
+                                @if (auth()->user()->role === 'petugas')
+                                    <form method="POST" action="{{ route('petugas.claims.approve', $claim) }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-primary btn-sm">Setujui dan serahkan</button>
+                                    </form>
+                                    <form method="POST" action="{{ route('petugas.claims.reject', $claim) }}" class="d-inline">
+                                        @csrf
+                                        <div class="input-group input-group-sm mt-2">
+                                            <input type="text" name="officer_note" class="form-control" placeholder="Catatan penolakan" required>
+                                            <button type="submit" class="btn btn-outline-danger">Tolak klaim</button>
+                                        </div>
+                                    </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

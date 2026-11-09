@@ -176,6 +176,29 @@ a { text-underline-offset: 3px; }
 }
 .panel--isi { padding: 1.25rem; }
 
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+.dashboard__sel {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px dashed var(--garis);
+}
+.dashboard__sel:nth-child(2n) { border-right: 0; }
+.dashboard__sel:nth-child(2n-1) { border-right: 1px dashed var(--garis); }
+.dashboard__sel:nth-last-child(-n+2) { border-bottom: 0; }
+.dashboard__label {
+  font-size: .875rem;
+  margin-bottom: .25rem;
+}
+.dashboard__angka {
+  font-family: 'Archivo', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--tinta);
+}
+
 .kaki {
   flex-shrink: 0;
   background: var(--putih);
@@ -361,6 +384,11 @@ a { text-underline-offset: 3px; }
   border: 1px solid var(--redup);
 }
 .status--selesai {
+  color: var(--tinta-pudar);
+  background: transparent;
+  border: 1px dashed var(--tinta-pudar);
+}
+.status--nonaktif {
   color: var(--tinta-pudar);
   background: transparent;
   border: 1px dashed var(--tinta-pudar);

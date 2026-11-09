@@ -7,29 +7,23 @@
         <h1 class="h2">Dashboard</h1>
     </section>
 
-    <div class="row g-3">
-        <div class="col-6 col-md-3">
-            <div class="panel p-3 text-center">
-                <div class="text-secondary small">Total laporan</div>
-                <div class="h3 mb-0">{{ $totalLaporan }}</div>
+    <div class="panel">
+        <div class="dashboard">
+            <div class="dashboard__sel">
+                <div class="dashboard__label teks-pudar">Total laporan</div>
+                <div class="dashboard__angka">{{ $totalLaporan }}</div>
             </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="panel p-3 text-center">
-                <div class="text-secondary small">Total klaim</div>
-                <div class="h3 mb-0">{{ $totalKlaim }}</div>
+            <div class="dashboard__sel">
+                <div class="dashboard__label teks-pudar">Total klaim</div>
+                <div class="dashboard__angka">{{ $totalKlaim }}</div>
             </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="panel p-3 text-center">
-                <div class="text-secondary small">Barang selesai</div>
-                <div class="h3 mb-0">{{ $barangSelesai }}</div>
+            <div class="dashboard__sel">
+                <div class="dashboard__label teks-pudar">Barang selesai</div>
+                <div class="dashboard__angka">{{ $barangSelesai }}</div>
             </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="panel p-3 text-center">
-                <div class="text-secondary small">Total pengguna</div>
-                <div class="h3 mb-0">{{ $totalPengguna }}</div>
+            <div class="dashboard__sel">
+                <div class="dashboard__label teks-pudar">Total pengguna</div>
+                <div class="dashboard__angka">{{ $totalPengguna }}</div>
             </div>
         </div>
     </div>

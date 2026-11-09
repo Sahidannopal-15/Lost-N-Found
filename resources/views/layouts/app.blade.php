@@ -24,15 +24,15 @@
         // [label, path, pola untuk menandai menu aktif, role yang boleh melihat (null = semua)]
         $peran = auth()->check() ? auth()->user()->role : null;
         $menu = [
-            ['Katalog',      '/',                 '/',                 null],
-            ['Lapor barang', '/items/create',     'items/create',      ['pengguna', 'petugas']],
-            ['Riwayat saya', '/riwayat',          'riwayat',           ['pengguna']],
-            ['Klaim masuk',  '/petugas/claims',   'petugas/*',         ['petugas']],
-            ['Kategori',     '/admin/categories', 'admin/categories*', ['admin']],
-            ['Lokasi',       '/admin/locations',  'admin/locations*',  ['admin']],
-            ['Pengguna',     '/admin/users',      'admin/users*',      ['admin']],
-            ['Dashboard',    '/admin/dashboard',  'admin/dashboard',   ['admin']],
-        ];
+                    ['Katalog',      '/',                 '/',                 null],
+                    ['Lapor barang', '/items/create',     'items/create',      ['pengguna', 'petugas']],
+                    ['Riwayat saya', '/riwayat',          'riwayat',           ['pengguna']],
+                    ['Klaim masuk',  '/petugas/claims',   'petugas/*',         ['petugas']],
+                    ['Dashboard',    '/admin/dashboard',  'admin/dashboard',   ['admin']],
+                    ['Kategori',     '/admin/categories', 'admin/categories*', ['admin']],
+                    ['Lokasi',       '/admin/locations',  'admin/locations*',  ['admin']],
+                    ['Pengguna',     '/admin/users',      'admin/users*',      ['admin']],
+                ];
     @endphp
 
     <header class="bar-atas">

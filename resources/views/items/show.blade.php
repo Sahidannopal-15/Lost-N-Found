@@ -41,10 +41,10 @@
 
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     @auth
-                        @if (auth()->id() === $item->user_id)
+                        @if (auth()->id() === $item->user_id && auth()->user()->role !== 'admin')
                             @if ($item->status !== 'dalam_klaim')
                                 <a class="btn btn-outline-secondary" href="{{ route('items.edit', $item) }}">Ubah</a>
-                                <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline">
+                                <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Hapus laporan ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger">Hapus laporan</button>
@@ -56,8 +56,15 @@
                                     <button type="submit" class="btn btn-primary">Tandai sudah ketemu</button>
                                 </form>
                             @endif
-                        @elseif ($item->type === 'temuan' && $item->status === 'aktif')
+                        @elseif ($item->type === 'temuan' && $item->status === 'aktif' && auth()->user()->role === 'pengguna')
                             <a class="btn btn-primary" href="{{ route('claims.create', $item) }}">Ajukan klaim</a>
+                        @endif
+                        @if (auth()->user()->role === 'admin')
+                            <form method="POST" action="{{ route('items.destroy', $item) }}" class="d-inline" onsubmit="return confirm('Hapus laporan ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger">Hapus laporan</button>
+                            </form>
                         @endif
                     @endauth
                 </div>

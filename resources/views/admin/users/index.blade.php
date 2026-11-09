@@ -15,7 +15,7 @@
                     <th>Email</th>
                     <th>Role</th>
                     <th>Status</th>
-                    <th></th>
+                    <th><span class="visually-hidden">Aksi</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -25,19 +25,22 @@
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->role }}</td>
                         <td>
-                            @if ($user->is_active)
-                                Aktif
-                            @else
-                                Nonaktif
-                            @endif
+                            @include('partials.status', ['status' => $user->is_active ? 'aktif' : 'nonaktif'])
                         </td>
                         <td class="text-end">
-                            <form method="POST" action="{{ route('admin.users.toggle', $user) }}" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                                    {{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
-                                </button>
-                            </form>
+                            @if ($user->id === auth()->id())
+                                <button type="button" class="btn btn-outline-secondary btn-sm" disabled>Aktifkan/Nonaktifkan</button>
+                                <div class="small text-muted">Akun sendiri</div>
+                            @else
+                                <form method="POST" action="{{ route('admin.users.toggle', $user) }}" class="d-inline">
+                                    @csrf
+                                    @if ($user->is_active)
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Nonaktifkan pengguna ini?');">Nonaktifkan</button>
+                                    @else
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm">Aktifkan</button>
+                                    @endif
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @empty
@@ -47,5 +50,8 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+    <div class="mt-3">
+        {{ $users->links() }}
     </div>
 @endsection

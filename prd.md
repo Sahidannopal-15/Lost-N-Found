@@ -28,11 +28,15 @@ Aplikasi web untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemuk
 | **Guest** | Belum login | Lihat katalog dan detail, register, login |
 | **Pengguna** | Register sendiri | Hak Guest + buat laporan hilang/temuan, ubah/hapus laporan miliknya, tandai laporan hilang miliknya selesai, ajukan klaim, lihat riwayat |
 | **Petugas** | Seeder | Hak Pengguna (kecuali mengklaim) + lihat daftar klaim, setujui/tolak klaim dengan catatan (setuju = serah terima), catat laporan temuan |
-| **Admin** | Seeder | CRUD kategori dan lokasi, hapus laporan bermasalah, lihat semua laporan dan klaim (hanya baca), dashboard (opsional) |
+| **Admin** | Seeder | CRUD kategori dan lokasi, hapus laporan bermasalah (termasuk yang `dalam_klaim`), lihat semua laporan dan klaim (hanya baca), dashboard, kelola/nonaktifkan pengguna |
 
 - Register selalu menghasilkan role `pengguna`.
 - Pengguna tidak boleh mengklaim barang yang ia laporkan sendiri.
 - Petugas dan Admin tidak mengajukan klaim.
+- Admin tetap bisa menghapus laporan bermasalah, termasuk yang berstatus `dalam_klaim`.
+- Hanya role pengguna yang boleh mengajukan klaim.
+- Akun yang dinonaktifkan tidak bisa login, dan sesi yang sedang berjalan (termasuk cookie "ingat saya") berakhir pada request berikutnya.
+- Admin tidak bisa menonaktifkan dirinya sendiri dan tidak bisa menonaktifkan admin aktif yang terakhir.
 
 ## 4. Fitur
 
@@ -50,10 +54,10 @@ Aplikasi web untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemuk
 | F8 | Riwayat saya | Daftar laporan dan klaim milik pengguna beserta status terbaru dan catatan petugas |
 | F9 | Validasi form sisi klien (jQuery) | Form register, login, laporan, klaim menampilkan pesan kesalahan sebelum dikirim; validasi server tetap ada |
 
-**Opsional (hanya jika waktu longgar):**
+**Tambahan (sudah dibuat):**
 
-- O1: Dashboard admin, 4 angka (total laporan, total klaim, barang selesai, total pengguna), hanya `count()`.
-- O2: Kelola/nonaktifkan pengguna.
+- O1: Dashboard admin, 4 angka, hanya `count()`. Definisi: total laporan = semua laporan semua status; total klaim = semua klaim semua status; barang selesai = laporan berstatus `selesai`; total pengguna = semua akun termasuk yang nonaktif.
+- O2: Kelola/nonaktifkan pengguna: daftar pengguna (15 per halaman) dengan tombol Aktifkan/Nonaktifkan; menonaktifkan meminta konfirmasi.
 
 ## 5. Alur, status, dan aturan bisnis
 
@@ -85,10 +89,12 @@ Aplikasi web untuk melaporkan, mencari, dan mengklaim barang hilang atau ditemuk
 - Laporan `dalam_klaim` tidak bisa diubah atau dihapus pemiliknya (Admin tetap bisa menghapus).
 - Katalog default menampilkan `aktif` dan `dalam_klaim`; `selesai` muncul bila difilter.
 - Persetujuan dilakukan saat pemilik hadir di pos, jadi persetujuan = serah terima.
+- Klaim hanya bisa disetujui atau ditolak saat berstatus `menunggu`.
+- Admin boleh menghapus laporan apa pun, termasuk yang berstatus `dalam_klaim`.
 
 ## 6. Model data (5 tabel)
 
-**users**: `id`, `name`, `email` (unik), `password` (hash bcrypt), `role` enum(`admin`,`petugas`,`pengguna`) default `pengguna`, `timestamps`
+**users**: `id`, `name`, `email` (unik), `password` (hash bcrypt), `role` enum(`admin`,`petugas`,`pengguna`) default `pengguna`, `is_active` boolean default `true`, `timestamps`
 
 **categories**: `id`, `name` (unik), `timestamps`
 
@@ -129,13 +135,13 @@ Relasi: users 1–N items; users 1–N claims; categories 1–N items; locations
 
 - **Versi:** Laravel 13 membutuhkan PHP 8.3 atau lebih baru; Laravel 12 mendukung PHP 8.2 sampai 8.5. Semua anggota cek `php -v`. Kalau ada yang di bawah 8.3, buat proyek dengan `composer create-project laravel/laravel:^12.0 lostnfound`. Satu versi untuk semua anggota; `composer.lock` di-commit.
 - **Kredensial:** `.env` tidak di-commit. `.env.example` di-commit dengan `DB_CONNECTION=mysql`, `DB_DATABASE=lostnfound`, `DB_USERNAME=root`, dan `DB_PASSWORD=` **dikosongkan**.
-- **Tanpa Vite/npm:** CSS ada di `public/css/app.css`. Bootstrap 5.3.3, Bootstrap Icons 1.11.3, jQuery 3.7.1, dan Google Fonts dimuat dari CDN (butuh internet saat demo).
+- **Tanpa build aset (Vite tidak dipakai):** file `package.json` bawaan Laravel boleh tetap ada. CSS ada di `public/css/app.css`. Bootstrap 5.3.3, Bootstrap Icons 1.11.3, jQuery 3.7.1, dan Google Fonts dimuat dari CDN (butuh internet saat demo).
 - **Paginasi:** di `AppServiceProvider::boot()` tambahkan `Paginator::useBootstrapFive();` (`use Illuminate\Pagination\Paginator;`). Tanpa ini paginasi Laravel memakai gaya Tailwind.
 - **Foto:** jalankan `php artisan storage:link`.
 
 ### Peta file aplikasi
 
-Peta ini mencakup file khusus aplikasi yang dibuat atau diubah untuk fitur F1–F9, bukan seluruh file bawaan Laravel. Gunakan lokasi dan nama berikut agar anggota tim memakai struktur yang konsisten.
+Peta ini mencakup file khusus aplikasi yang dibuat atau diubah untuk fitur F1–F9 dan O1–O2, bukan seluruh file bawaan Laravel. Gunakan lokasi dan nama berikut agar anggota tim memakai struktur yang konsisten.
 
 | Tanggung jawab | File atau folder |
 |---|---|
@@ -145,13 +151,17 @@ Peta ini mencakup file khusus aplikasi yang dibuat atau diubah untuk fitur F1–
 | Pengajuan klaim dan riwayat | `app/Http/Controllers/ClaimController.php` — pengajuan klaim; `app/Http/Controllers/RiwayatController.php` — riwayat pengguna |
 | Verifikasi klaim petugas | `app/Http/Controllers/Petugas/ClaimController.php` — daftar, setujui, dan tolak klaim |
 | CRUD master data admin | `app/Http/Controllers/Admin/CategoryController.php` dan `app/Http/Controllers/Admin/LocationController.php` |
+| Dashboard dan kelola pengguna (admin) | `app/Http/Controllers/Admin/DashboardController.php`; `app/Http/Controllers/Admin/UserController.php` |
 | Endpoint JSON barang | `app/Http/Controllers/Api/ItemController.php` — daftar dan detail barang, hanya baca |
-| Pembatasan role | `app/Http/Middleware/RoleMiddleware.php` |
+| Pembatasan role dan akun nonaktif | `app/Http/Middleware/RoleMiddleware.php`; `app/Http/Middleware/EnsureUserIsActive.php` (alias `aktif`, memutus sesi akun nonaktif) |
 | Paginasi Bootstrap | `app/Providers/AppServiceProvider.php` — aktifkan `Paginator::useBootstrapFive()` |
 | Route halaman dan form | `routes/web.php` |
 | Skema basis data | `database/migrations/` — migration untuk `users`, `categories`, `locations`, `items`, dan `claims` |
 | Data demo | `database/seeders/DatabaseSeeder.php` |
 | Halaman Blade | `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`; `resources/views/items/index.blade.php`, `resources/views/items/show.blade.php`, `resources/views/items/create.blade.php`, `resources/views/items/edit.blade.php`; `resources/views/claims/create.blade.php`; `resources/views/riwayat/index.blade.php`; `resources/views/petugas/claims/index.blade.php`; `resources/views/admin/categories/index.blade.php`, `resources/views/admin/categories/create.blade.php`, `resources/views/admin/categories/edit.blade.php`; `resources/views/admin/locations/index.blade.php`, `resources/views/admin/locations/create.blade.php`, `resources/views/admin/locations/edit.blade.php` |
+| Halaman Blade admin tambahan | `resources/views/admin/dashboard.blade.php`; `resources/views/admin/users/index.blade.php` |
+| Layout dan komponen desain | `resources/views/layouts/app.blade.php`; `resources/views/partials/tiket.blade.php`, `status.blade.php`, `kosong.blade.php` (lihat bagian 11) |
+| Validasi klien (F9) | `public/js/validasi.js`; dimuat lewat `@push('skrip')` di view register, login, form laporan, dan form klaim |
 | CSS aplikasi | `public/css/app.css` — lokasi kanonis sesuai bagian 11; jangan menyimpan salinan kedua di `public/app.css` |
 | Skrip halaman | `@push('skrip')` pada view terkait, sesuai bagian 11; gunakan jQuery yang dimuat layout, tanpa Vite/npm |
 | Pengujian | `tests/Feature/` untuk alur dan akses fitur; `tests/Unit/` untuk logika unit bila diperlukan |
@@ -160,7 +170,7 @@ Nama controller dan path view di atas menjadi ketentuan struktur proyek. Jika be
 
 ## 8. Halaman dan route
 
-**Halaman:** (1) beranda/katalog, (2) detail barang, (3) login, (4) register, (5) form lapor barang, (6) riwayat saya, (7) form klaim, (8) dashboard admin (opsional), (9) admin kategori dan lokasi, (10) petugas daftar klaim + verifikasi. Ditambah form edit laporan.
+**Halaman:** (1) beranda/katalog, (2) detail barang, (3) login, (4) register, (5) form lapor barang, (6) riwayat saya, (7) form klaim, (8) dashboard admin, (9) admin kategori dan lokasi, (10) petugas daftar klaim + verifikasi, (11) admin kelola pengguna. Ditambah form edit laporan.
 
 | Akses | Method dan path | Fungsi |
 |---|---|---|
@@ -169,14 +179,16 @@ Nama controller dan path view di atas menjadi ketentuan struktur proyek. Jika be
 | Guest | `GET/POST /register`, `GET/POST /login` | Register dan login |
 | Login | `POST /logout` | Logout |
 | Pengguna, Petugas | `GET /items/create`, `POST /items` | Buat laporan |
-| Pemilik laporan | `GET /items/{item}/edit`, `PUT /items/{item}`, `DELETE /items/{item}` | Ubah dan hapus |
+| Pemilik laporan | `GET /items/{item}/edit`, `PUT /items/{item}` | Ubah |
+| Pemilik laporan, Admin | `DELETE /items/{item}` | Hapus (pemilik: tidak bisa jika `dalam_klaim`; admin: selalu bisa) |
 | Pemilik laporan hilang | `POST /items/{item}/selesai` | Tandai sudah ketemu |
 | Pengguna | `GET /riwayat` | Riwayat saya |
 | Pengguna | `GET /items/{item}/claims/create`, `POST /items/{item}/claims` | Ajukan klaim |
-| Petugas | `GET /petugas/claims` | Daftar klaim |
 | Petugas | `POST /petugas/claims/{claim}/approve`, `POST /petugas/claims/{claim}/reject` | Putuskan klaim |
 | Admin | `resource /admin/categories`, `resource /admin/locations` | CRUD master data |
-| Admin | `GET /admin/dashboard` | Dashboard (opsional) |
+| Admin | `GET /admin/dashboard` | Dashboard |
+| Admin | `GET /admin/users`, `POST /admin/users/{user}/toggle` | Kelola/nonaktifkan pengguna |
+| Petugas, Admin | `GET /petugas/claims` | Daftar klaim (admin hanya baca) |
 
 ## 9. REST API
 
@@ -204,6 +216,8 @@ Field JSON per barang: `id`, `code`, `type`, `title`, `description`, `category`,
 - Otorisasi di server: pengguna hanya bisa ubah/hapus laporan miliknya; route Admin dan Petugas dilindungi middleware role.
 - Upload foto divalidasi tipe dan ukuran; disimpan di `storage/app/public` (jalankan `php artisan storage:link`).
 - API tidak membocorkan data pengguna.
+- Status `is_active` diperiksa pada setiap request lewat middleware `aktif`, bukan hanya saat login.
+- Tes otomatis tidak boleh memakai database development; gunakan SQLite in-memory.
 
 ## 11. Desain UI
 
@@ -274,12 +288,13 @@ Urutan ini murni soal ketergantungan antar fitur (bukan jadwal):
 6. F5 API + F4 katalog dan filter AJAX.
 7. F6 klaim → F7 verifikasi dan serah terima → F8 riwayat.
 8. F9 validasi jQuery di semua form.
-9. Opsional: O1 dashboard, O2 kelola pengguna.
+9. O1 dashboard dan O2 kelola pengguna (sudah dibuat).
 
 ## 14. Definition of Done
 
 - Proyek berjalan di laptop anggota mana pun dengan `php artisan migrate --seed` lalu `php artisan serve`.
-- F1–F9 bisa didemokan memakai tiga akun seeder.
+- F1–F9 dan O1–O2 bisa didemokan memakai tiga akun seeder.
+- `php artisan test` lulus semua.
 - CRUD kategori, lokasi, dan laporan tersambung ke MySQL.
 - Seluruh halaman di bagian 8 bisa diakses dengan data seeder.
 - Semua halaman memakai layout dan partials dari bagian 11, tanpa warna biru Bootstrap bawaan, tanpa emoji sebagai ikon, dan tanpa teks placeholder.
