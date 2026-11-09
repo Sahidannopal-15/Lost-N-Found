@@ -127,10 +127,17 @@ a { text-underline-offset: 3px; }
   place-items: center;
   width: 1.75rem;
   height: 1.75rem;
-  background: var(--merah);
+  background: transparent;
   color: #fff;
   border-radius: var(--r-kontrol);
   font-size: .9375rem;
+  overflow: hidden;
+}
+.merek-tanda img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .bar-atas .nav-link {

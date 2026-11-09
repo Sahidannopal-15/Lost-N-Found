@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/png" href="{{ asset('findo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('findo.png') }}">
     <title>@yield('judul', 'Findo')</title>
 
     {{-- Font: Archivo (judul) + Plus Jakarta Sans (isi). Ada font cadangan di app.css. --}}
@@ -39,7 +41,7 @@
         <nav class="navbar navbar-expand-lg" aria-label="Menu utama">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <span class="merek-tanda" aria-hidden="true"><i class="bi bi-tag-fill"></i></span>
+                    <span class="merek-tanda" aria-hidden="true"><img src="{{ asset('findo.png') }}" alt="" width="28" height="28"></span>
                     Findo
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -109,7 +111,7 @@
             <div class="row g-4 kaki__grid">
                 <div class="col-12 col-md-5">
                     <a class="kaki__merek" href="{{ url('/') }}">
-                        <span class="merek-tanda" aria-hidden="true"><i class="bi bi-tag-fill"></i></span>
+                        <span class="merek-tanda" aria-hidden="true"><img src="{{ asset('findo.png') }}" alt="" width="28" height="28"></span>
                         Findo
                     </a>
                     <p class="kaki__deskripsi mt-2 mb-0">
