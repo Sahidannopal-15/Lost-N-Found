@@ -285,12 +285,14 @@ a { text-underline-offset: 3px; }
 .tiket__foto {
   flex: none;
   width: 104px;
+  height: 275px;
   min-height: 104px;
   display: grid;
   place-items: center;
   background: var(--redup);
   color: var(--tinta-pudar);
   font-size: 1.75rem;
+  overflow: hidden;
 }
 .tiket__foto img {
   width: 100%;

@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'aktif' => \App\Http\Middleware\EnsureUserIsActive::class,
     ]);
+    $middleware->web(append: [
+            \App\Http\Middleware\EnsureUserIsActive::class,
+    ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
