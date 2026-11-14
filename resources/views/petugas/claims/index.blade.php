@@ -28,11 +28,11 @@
                 <tbody>
                     @foreach ($claims as $claim)
                         <tr>
-                            <td>{{ $claim->item->title }} ({{ $claim->item->code }})</td>
-                            <td>{{ $claim->user->name }}</td>
-                            <td>{{ $claim->description }}</td>
-                            <td>{{ $claim->proof }}</td>
-                            <td class="text-end">
+                            <td data-label="Barang">{{ $claim->item->title }} ({{ $claim->item->code }})</td>
+                            <td data-label="Pengklaim">{{ $claim->user->name }}</td>
+                            <td data-label="Ciri">{{ $claim->description }}</td>
+                            <td data-label="Bukti">{{ $claim->proof }}</td>
+                            <td class="text-end" data-label="Aksi">
                                 @if (auth()->user()->role === 'petugas')
                                     <form method="POST" action="{{ route('petugas.claims.approve', $claim) }}" class="d-inline">
                                         @csrf

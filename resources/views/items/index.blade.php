@@ -2,69 +2,93 @@
 
 @section('judul', 'Katalog barang hilang dan ditemukan')
 
-@section('isi')
-    <section class="judul-halaman">
-        <h1 class="h2">Barang hilang dan ditemukan di kampus</h1>
-        <p>Lihat laporan barang yang hilang atau ditemukan.</p>
-    </section>
+@section('pita')
+{{-- Form pencarian dibungkus pita gelap; panel filter lanjutan di bawahnya.
+     Semua id dan name tidak berubah; JavaScript katalog tetap membaca #filter-katalog. --}}
+<form id="filter-katalog" method="get" action="{{ route('items.index') }}">
+    <section class="pita-pencarian">
+        <div class="container">
+            <section class="judul-halaman">
+                <h1 class="h2">Barang hilang dan ditemukan di kampus</h1>
+                <p>Lihat laporan barang yang hilang atau ditemukan.</p>
+            </section>
 
-    <form id="filter-katalog" class="penyaring" method="get" action="{{ route('items.index') }}">
-        <div class="row g-3">
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="q">Kata kunci</label>
-                <input class="form-control" id="q" name="q" type="search" value="{{ request('q') }}"
-                       placeholder="Judul atau ciri barang">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="type">Jenis laporan</label>
-                <select class="form-select" id="type" name="type">
-                    <option value="">Semua jenis</option>
-                    <option value="hilang" @selected(request('type') === 'hilang')>Hilang</option>
-                    <option value="temuan" @selected(request('type') === 'temuan')>Temuan</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="category_id">Kategori</label>
-                <select class="form-select" id="category_id" name="category_id">
-                    <option value="">Semua kategori</option>
-                    @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @selected((string) request('category_id') === (string) $category->id)>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="location_id">Lokasi</label>
-                <select class="form-select" id="location_id" name="location_id">
-                    <option value="">Semua lokasi</option>
-                    @foreach ($locations as $location)
-                        <option value="{{ $location->id }}" @selected((string) request('location_id') === (string) $location->id)>
-                            {{ $location->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="status">Status</label>
-                <select class="form-select" id="status" name="status">
-                    <option value="">Aktif dan dalam klaim</option>
-                    <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
-                    <option value="dalam_klaim" @selected(request('status') === 'dalam_klaim')>Dalam klaim</option>
-                    <option value="selesai" @selected(request('status') === 'selesai')>Selesai</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="form-label" for="date_from">Sejak tanggal</label>
-                <input class="form-control" id="date_from" name="date_from" type="date" value="{{ request('date_from') }}">
-            </div>
-            <div class="col-12 d-flex flex-wrap gap-2">
-                <button class="btn btn-primary" type="submit">Cari</button>
-                <button class="btn btn-outline-secondary" id="hapus-filter" type="button">Hapus filter</button>
+            <div class="row g-3 align-items-end">
+                <div class="col-9 col-md-6 col-lg-4">
+                    <label class="form-label" for="q">Kata kunci</label>
+                    <input class="form-control" id="q" name="q" type="search" value="{{ request('q') }}"
+                           placeholder="Judul atau ciri barang">
+                </div>
+                <div class="col-3 col-md-auto">
+                    <button class="btn btn-outline-secondary tombol-filter w-100" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#filter-lanjutan"
+                            aria-expanded="false" aria-controls="filter-lanjutan">
+                        Filter <span id="jumlah-filter" class="badge text-bg-secondary"></span>
+                    </button>
+                </div>
+                <div class="col-12 d-flex flex-wrap gap-2">
+                    <button class="btn btn-primary" type="submit">Cari</button>
+                    <button class="btn btn-outline-secondary" id="hapus-filter" type="button">Hapus filter</button>
+                </div>
             </div>
         </div>
-    </form>
+    </section>
 
+    <div class="container">
+        <div class="collapse" id="filter-lanjutan">
+            <div class="penyaring-lanjutan">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="form-label" for="type">Jenis laporan</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="">Semua jenis</option>
+                            <option value="hilang" @selected(request('type') === 'hilang')>Hilang</option>
+                            <option value="temuan" @selected(request('type') === 'temuan')>Temuan</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="form-label" for="category_id">Kategori</label>
+                        <select class="form-select" id="category_id" name="category_id">
+                            <option value="">Semua kategori</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}" @selected((string) request('category_id') === (string) $category->id)>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="form-label" for="location_id">Lokasi</label>
+                        <select class="form-select" id="location_id" name="location_id">
+                            <option value="">Semua lokasi</option>
+                            @foreach ($locations as $location)
+                                <option value="{{ $location->id }}" @selected((string) request('location_id') === (string) $location->id)>
+                                    {{ $location->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="form-label" for="status">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Aktif dan dalam klaim</option>
+                            <option value="aktif" @selected(request('status') === 'aktif')>Aktif</option>
+                            <option value="dalam_klaim" @selected(request('status') === 'dalam_klaim')>Dalam klaim</option>
+                            <option value="selesai" @selected(request('status') === 'selesai')>Selesai</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="form-label" for="date_from">Sejak tanggal</label>
+                        <input class="form-control" id="date_from" name="date_from" type="date" value="{{ request('date_from') }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@endsection
+
+@section('isi')
     <p class="visually-hidden" id="status-katalog" role="status" aria-live="polite"></p>
 
     <div id="hasil-katalog" aria-live="polite">
@@ -98,6 +122,15 @@
 <script>
     $(function () {
         const $form = $('#filter-katalog');
+        // Hitung filter aktif
+        function perbaruiJumlahFilter() {
+            const jumlah = $form.find('select, input[type="date"], input[name="q"]').filter(function () {
+                return $(this).val() !== '';
+            }).length;
+            $('#jumlah-filter').text(jumlah ? jumlah : '');
+        }
+        perbaruiJumlahFilter();
+        $form.on('change input', perbaruiJumlahFilter);
         const $hasil = $('#hasil-katalog');
         const $paginasi = $('#paginasi-katalog');
         const $status = $('#status-katalog');

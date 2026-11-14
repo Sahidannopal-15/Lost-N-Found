@@ -23,9 +23,9 @@
             <tbody>
                 @forelse ($locations as $location)
                     <tr>
-                        <td>{{ $location->name }}</td>
-                        <td>{{ $location->items_count }}</td>
-                        <td class="text-end">
+                        <td data-label="Nama">{{ $location->name }}</td>
+                        <td data-label="Jumlah laporan">{{ $location->items_count }}</td>
+                        <td class="text-end" data-label="Aksi">
                             <a href="{{ route('admin.locations.edit', $location) }}" class="btn btn-outline-secondary btn-sm">Ubah</a>
                             <form method="POST" action="{{ route('admin.locations.destroy', $location) }}" class="d-inline">
                                 @csrf

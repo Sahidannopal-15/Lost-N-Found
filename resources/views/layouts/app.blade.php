@@ -38,7 +38,7 @@
     @endphp
 
     <header class="bar-atas">
-        <nav class="navbar navbar-expand-lg" aria-label="Menu utama">
+        <nav class="navbar navbar-expand-lg" data-bs-theme="dark" aria-label="Menu utama">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <span class="merek-tanda" aria-hidden="true"><img src="{{ asset('findo.png') }}" alt="" width="28" height="28"></span>
@@ -89,7 +89,9 @@
     </header>
 
     <main id="konten" class="halaman">
-        <div class="container">
+            {{-- Pita selebar layar (mis. pita pencarian katalog), di luar container. --}}
+            @yield('pita', '')
+            <div class="container">
             @if (session('sukses'))
                 <div class="alert alert-success" role="status">{{ session('sukses') }}</div>
             @endif

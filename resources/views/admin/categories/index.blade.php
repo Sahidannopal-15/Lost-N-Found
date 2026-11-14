@@ -23,9 +23,9 @@
             <tbody>
                 @forelse ($categories as $category)
                     <tr>
-                        <td>{{ $category->name }}</td>
-                        <td>{{ $category->items_count }}</td>
-                        <td class="text-end">
+                        <td data-label="Nama">{{ $category->name }}</td>
+                        <td data-label="Jumlah laporan">{{ $category->items_count }}</td>
+                        <td class="text-end" data-label="Aksi">
                             <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-outline-secondary btn-sm">Ubah</a>
                             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}" class="d-inline">
                                 @csrf

@@ -37,9 +37,9 @@
                     <tbody>
                         @foreach ($claims as $claim)
                             <tr>
-                                <td>{{ $claim->item->title }} ({{ $claim->item->code }})</td>
-                                <td>{{ $claim->status }}</td>
-                                <td>{{ $claim->officer_note }}</td>
+                                <td data-label="Barang">{{ $claim->item->title }} ({{ $claim->item->code }})</td>
+                                <td data-label="Status klaim">{{ $claim->status }}</td>
+                                <td data-label="Catatan petugas">{{ $claim->officer_note }}</td>
                             </tr>
                         @endforeach
                     </tbody>

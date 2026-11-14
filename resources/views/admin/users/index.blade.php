@@ -21,13 +21,13 @@
             <tbody>
                 @forelse ($users as $user)
                     <tr>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->role }}</td>
-                        <td>
+                        <td data-label="Nama">{{ $user->name }}</td>
+                        <td data-label="Email">{{ $user->email }}</td>
+                        <td data-label="Role">{{ $user->role }}</td>
+                        <td data-label="Status">
                             @include('partials.status', ['status' => $user->is_active ? 'aktif' : 'nonaktif'])
                         </td>
-                        <td class="text-end">
+                        <td class="text-end" data-label="Aksi">
                             @if ($user->id === auth()->id())
                                 <button type="button" class="btn btn-outline-secondary btn-sm" disabled>Aktifkan/Nonaktifkan</button>
                                 <div class="small text-muted">Akun sendiri</div>

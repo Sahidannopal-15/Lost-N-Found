@@ -8,7 +8,7 @@ Dokumen ini adalah satu-satunya sumber kebenaran untuk pengembangan. Kalau dipak
 - Kerjakan per langkah kecil (lihat bagian 13), uji tiap langkah sebelum lanjut.
 - Pakai nama tabel, kolom, status, dan route persis seperti tertulis.
 - Jangan memakai Breeze/Jetstream (Tailwind). Auth ditulis manual.
-- Tampilan memakai file desain di bagian 11. Jangan mengubah warna, font, atau nama kelas komponennya. Halaman baru memakai komponen yang sudah ada.
+- Tampilan memakai file desain di bagian 11. Jangan mengubah warna, font, atau nama kelas komponennya. Aturan responsif dan aksesibilitas ada di bagian 11.1, komposisi warna 60-30-10 di bagian 11.2. Halaman baru memakai komponen yang sudah ada.
 
 ## 1. Ringkasan
 
@@ -160,6 +160,7 @@ Peta ini mencakup file khusus aplikasi yang dibuat atau diubah untuk fitur F1–
 | Data demo | `database/seeders/DatabaseSeeder.php` |
 | Halaman Blade | `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`; `resources/views/items/index.blade.php`, `resources/views/items/show.blade.php`, `resources/views/items/create.blade.php`, `resources/views/items/edit.blade.php`; `resources/views/claims/create.blade.php`; `resources/views/riwayat/index.blade.php`; `resources/views/petugas/claims/index.blade.php`; `resources/views/admin/categories/index.blade.php`, `resources/views/admin/categories/create.blade.php`, `resources/views/admin/categories/edit.blade.php`; `resources/views/admin/locations/index.blade.php`, `resources/views/admin/locations/create.blade.php`, `resources/views/admin/locations/edit.blade.php` |
 | Halaman Blade admin tambahan | `resources/views/admin/dashboard.blade.php`; `resources/views/admin/users/index.blade.php` |
+| Halaman galat | `resources/views/errors/403.blade.php`, `resources/views/errors/404.blade.php` (memakai layout, lihat 11.1 pola h) |
 | Layout dan komponen desain | `resources/views/layouts/app.blade.php`; `resources/views/partials/tiket.blade.php`, `status.blade.php`, `kosong.blade.php` (lihat bagian 11) |
 | Validasi klien (F9) | `public/js/validasi.js`; dimuat lewat `@push('skrip')` di view register, login, form laporan, dan form klaim |
 | CSS aplikasi | `public/css/app.css` — lokasi kanonis sesuai bagian 11; jangan menyimpan salinan kedua di `public/app.css` |
@@ -221,7 +222,7 @@ Field JSON per barang: `id`, `code`, `type`, `title`, `description`, `category`,
 
 ## 11. Desain UI
 
-Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diubah.** Gagasan desainnya: tiap laporan tampil sebagai **tiket barang** (kartu dengan garis sobekan, jenis laporan, kode, dan status). Itu satu-satunya elemen yang mencolok; sisanya sengaja tenang.
+Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diubah**, kecuali perubahan responsif (bagian 11.1) dan pembagian peran warna 60-30-10 (bagian 11.2). Gagasan desainnya: tiap laporan tampil sebagai **tiket barang** (kartu dengan garis sobekan, jenis laporan, kode, dan status). Itu satu-satunya elemen yang mencolok; sisanya sengaja tenang.
 
 **Letak file di proyek Laravel:**
 
@@ -248,8 +249,8 @@ Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diu
 | Peran | Nilai |
 |---|---|
 | Merah Telkom (aksen, garis atas) | `#EC1C24` |
-| Merah tekan (tombol, tautan, label "Ditemukan") | `#C8101A` |
-| Tinta (teks utama, label "Hilang") | `#26272A` |
+| Merah tekan (tombol utama, label "Ditemukan", penanda menu aktif) | `#C8101A` |
+| Tinta (teks utama, navbar, footer, pita pencarian, label "Hilang") | `#26272A` |
 | Tinta pudar (teks sekunder) | `#5B5D61` |
 | Kertas (latar halaman) | `#EEF0F2` |
 | Garis (border, garis sobekan) | `#D3D5D9` |
@@ -263,7 +264,7 @@ Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diu
 - Tanpa emoji sebagai ikon (Bootstrap Icons saja), tanpa label KAPITAL, tanpa `btn-primary` biru bawaan.
 - Status dibedakan lewat ikon, bentuk garis, dan teks, bukan warna saja.
 - Data seeder realistis, tanpa "Lorem ipsum" atau nama generik.
-- Halaman baru memakai komponen yang sudah ada. Jangan menambah warna, font, atau gaya baru.
+- Halaman baru memakai komponen yang sudah ada. Jangan menambah warna, font, atau gaya baru. Satu-satunya pengecualian: kelas kecil untuk pola responsif di bagian 11.1, yang memakai token yang sudah ada.
 
 **Teks antarmuka (bahasa Indonesia, nama aksi sama di seluruh alur):**
 
@@ -271,6 +272,54 @@ Tampilan sudah dirancang dan disediakan sebagai file. **Pakai persis, jangan diu
 - Error (spesifik, tidak minta maaf): "Email belum diisi.", "Format email tidak valid, contoh: nama@email.com.", "Password minimal 8 karakter.", "Konfirmasi password tidak sama.", "Email atau password salah. Periksa lagi, lalu coba masuk.", "Judul barang belum diisi.", "Tanggal tidak boleh lebih dari hari ini.", "Foto harus berformat JPG atau PNG, maksimal 2 MB.", "Ciri barang minimal 20 karakter. Sebutkan hal yang hanya diketahui pemilik, misalnya isi tas atau goresan.", "Kategori ini masih dipakai 5 laporan, jadi belum bisa dihapus. Pindahkan laporannya ke kategori lain dulu."
 - Sukses: "Laporan disimpan.", "Klaim dikirim. Petugas akan memeriksa buktimu.", "Klaim disetujui. Serah terima tercatat."
 - Kosong: katalog tanpa hasil: "Belum ada barang yang cocok. Ubah kata kunci atau hapus filter. Barangmu belum dilaporkan? Buat laporan baru." Katalog kosong total: "Belum ada laporan. Laporkan barang hilang atau temuan pertama." Riwayat: "Kamu belum punya laporan atau klaim. Kehilangan atau menemukan sesuatu? Buat laporan pertamamu." Klaim masuk (petugas): "Tidak ada klaim yang menunggu."
+
+### 11.1 Responsif dan aksesibilitas
+
+Berlaku untuk semua halaman di bagian 8. Mobile-first, breakpoint Bootstrap 576 / 768 / 992 / 1200 / 1400. Tampilan desktop (1280px ke atas) tidak berubah kecuali untuk memperbaiki pelanggaran yang terukur. Perubahan terutama di `public/css/app.css` dan sedikit markup Blade; route dan logika controller tidak berubah.
+
+**Kriteria (lulus atau gagal), diuji pada lebar 320, 375, 414, 667 (landscape), 768, 1024, 1280, 1536, dan zoom 200% di 1280:**
+
+1. Tidak ada gulir samping pada halaman (gulir di dalam `.table-responsive` boleh). Konten tetap terbaca di zoom 200%.
+2. Semua elemen interaktif (tombol termasuk `.btn-sm`, tautan menu, kontrol filter, paginasi, ikon aksi) minimal 44 x 44 px dengan jarak antar-target minimal 8 px. Tautan di dalam kalimat dikecualikan.
+3. Teks isi minimal 16px di HP, teks sekunder minimal 14px, dan semua input, select, textarea berukuran font minimal 16px.
+4. Navbar di bawah 992px menjadi menu (hamburger): semua menu sesuai role terjangkau, menu aktif terlihat, tombol Keluar terjangkau, `aria-expanded` benar, bisa dioperasikan dengan keyboard, tombol hamburger 44 x 44 px.
+5. Konten buatan pengguna yang panjang (judul, deskripsi, email, nama) tidak merusak tata letak (`overflow-wrap`).
+6. Gambar tidak melonjak ukurannya saat dimuat (aspect-ratio atau dimensi tetap) dan tidak melebihi kontainer.
+7. Kontras teks minimal 4,5:1 dan batas kontrol form minimal 3:1. Fokus keyboard terlihat di semua ukuran. Tidak ada fungsi yang hanya bisa lewat hover.
+8. Di HP landscape (667 x 375) elemen yang menempel tidak menutup lebih dari sepertiga tinggi layar.
+9. Tinggi penuh memakai `100dvh` dengan cadangan `100vh`.
+
+**Pola yang ditetapkan:**
+
+- **a. Katalog di HP (< 768px):** kolom pencarian selalu tampak; filter lain berada di panel buka-tutup bertombol "Filter" yang menampilkan jumlah filter aktif; tombol Cari dan Hapus filter selebar penuh. Boleh menambah JS kecil untuk menghitung filter aktif; request AJAX katalog tidak diubah.
+- **b. Tiket katalog:** satu kolom di HP (foto di kiri), dua kolom di tablet, tiga kolom di desktop.
+- **c. Detail barang:** ditumpuk di bawah 992px. Di bawah 768px aksi utama yang positif (misalnya Ajukan klaim) tampil sebagai bilah menempel di bawah layar, memakai `env(safe-area-inset-bottom)` dan padding bawah halaman agar isi tidak tertutup. Bilah dipisah dengan garis atas (tanpa bayangan). Jangan menduplikasi elemen: ubah posisi elemen yang sama dengan CSS. Aksi yang merusak (Hapus laporan) tetap di dalam sobekan tiket.
+- **d. Tabel admin dan petugas di bawah 576px:** baris menjadi tumpukan berlabel lewat atribut `data-label` pada `<td>` dan CSS saja (struktur tabel tidak berubah). Label berupa kalimat biasa, bukan KAPITAL. Tombol aksi 44px dan tidak saling menempel.
+- **e. Form:** satu kolom di HP dengan label di atas kolom; atribut yang tepat (`type="email"`, `autocomplete`, `inputmode`); tombol kirim selebar penuh di HP; pesan error tepat di bawah kolomnya dan tidak tertutup bilah menempel.
+- **f. Paginasi:** boleh membungkus ke baris berikutnya; tiap tautan 44px.
+- **g. Dashboard:** empat sel menjadi 2 x 2 di HP, tetap rata kiri.
+- **h. Halaman galat 403 dan 404:** memakai layout aplikasi (bukan halaman bawaan Laravel).
+
+**Catatan:** judul pada kartu katalog boleh dipotong dua baris karena isi lengkap ada di halaman detail. Di halaman detail dan di tabel, judul tidak dipotong. Bukti ukur dan screenshot (lebar 375, 768, 1280) disimpan di `docs/responsif/` dan boleh di-commit.
+
+### 11.2 Komposisi warna 60-30-10
+
+Tidak ada warna baru. Yang diatur hanya **pembagian peran** token yang sudah ada, supaya tampilan punya struktur dan aksen merah tetap bermakna.
+
+| Porsi | Peran | Token | Dipakai untuk |
+|---|---|---|---|
+| 60% netral | Latar dan permukaan | Kertas, putih, sobekan, redup, garis | Latar halaman, panel, kartu tiket, form, tabel, garis pemisah |
+| 30% sekunder | Struktur dan teks | Tinta, tinta pudar | Navbar, footer, pita pencarian katalog, teks, label "Hilang", garis bawah header tabel |
+| 10% aksen | Perhatian dan aksi | Merah Telkom, merah tekan, merah gelap | Tombol utama, label "Ditemukan", tanda merek, penanda menu aktif, garis atas, pesan galat |
+
+**Aturan:**
+
+- **Area gelap (30%):** navbar (`data-bs-theme="dark"`), footer, dan pita pencarian di bagian atas katalog (selebar layar, rata kiri, berisi judul dan pencarian). Teks di area gelap berwarna putih (kontras minimal 4,5:1).
+- **Merah bukan warna teks di atas area gelap** (kontras hanya sekitar 2,5:1). Penanda menu aktif di navbar gelap berupa garis bawah merah dengan teks putih.
+- **Tautan di dalam teks** memakai tinta dengan garis bawah; merah hanya saat hover. Merah tidak dipakai sebagai warna tautan biasa.
+- **Satu tombol utama merah per area pandang.** Tombol lain memakai gaya sekunder.
+- **Ukuran komposisi:** ambil screenshot lebar 375 dan 1280 untuk katalog, detail barang, form lapor, tabel admin, dan login. Kelompokkan piksel ke token terdekat: netral = kertas, putih, sobekan, redup, garis; sekunder = tinta dan tinta pudar; aksen = tiga warna merah. Target: netral 55-70%, sekunder 20-35%, aksen 5-12%. Aksen tidak boleh melebihi 12% di halaman mana pun.
+- Angka di atas adalah panduan, bukan hukum: teks dan foto ikut memengaruhi hitungan. Keputusan akhir tetap lewat penilaian mata.
 
 ## 12. Di luar scope
 
@@ -298,3 +347,5 @@ Urutan ini murni soal ketergantungan antar fitur (bukan jadwal):
 - CRUD kategori, lokasi, dan laporan tersambung ke MySQL.
 - Seluruh halaman di bagian 8 bisa diakses dengan data seeder.
 - Semua halaman memakai layout dan partials dari bagian 11, tanpa warna biru Bootstrap bawaan, tanpa emoji sebagai ikon, dan tanpa teks placeholder.
+- Kriteria responsif bagian 11.1 lulus pada lebar 320 sampai 1536px, dibuktikan dengan hasil ukur dan screenshot.
+- Komposisi warna bagian 11.2 terpenuhi pada halaman yang diukur, dibuktikan dengan tabel persentase.
